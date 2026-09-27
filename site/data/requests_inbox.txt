@@ -1,0 +1,75 @@
+--- REQ-01 | 2026-09-21 09:12 | From: Jordan Lee <jlee@example.edu>
+Subject: Application: Maize & Blue Meal Prep
+
+Hi, I'm a sophomore starting a meal-prep business for students. I need help forming an LLC and a basic customer agreement. I'm not sure if I should apply to the entrepreneurship clinic or the small business clinic. Thanks!
+
+--- REQ-02 | 2026-09-21 10:40 | From: Dr. Anita Rao <arao@example.edu>
+Subject: MTA request - cell line to Ohio State
+
+We'd like to send our HEK-derived reporter line to a collaborator at Ohio State for non-commercial research. No IP on the line; they'll cover shipping. Can this go on the standard agreement?
+
+--- REQ-03 | 2026-09-21 13:05 | From: records.request@example.org
+Subject: FOIA request: email retention policies 2019-2026
+
+Under Michigan FOIA I request all policies, memos and drafts concerning email retention and disposal from January 2019 to present, in electronic form. Please respond within the statutory period.
+
+--- REQ-04 | 2026-09-22 08:30 | From: Dining Sustainability Form
+Subject: Form response: North Quad kitchen
+
+Pillar: Waste Reduction. Current practice: we compost pre-consumer scraps 3 days a week. Goal: daily composting and a plate-waste audit. Barrier: no scale, no student staffing after 7pm.
+
+--- REQ-05 | 2026-09-22 09:15 | From: Jordan Lee <jlee@example.edu>
+Subject: Re: Application: Maize & Blue Meal Prep
+
+Sorry, I forgot to add: I already have a co-founder and we need a founders' agreement too. Same application.
+
+--- REQ-06 | 2026-09-22 11:47 | From: Sam Okoro <sokoro@example.edu>
+Subject: Limited submission question
+
+Is the Sloan early-career program still accepting internal applications? The funder deadline is Nov 3 and I'm told U-M can only nominate two. Who decides?
+
+--- REQ-07 | 2026-09-22 14:20 | From: Dr. Wei Zhang <wzhang@example.edu>
+Subject: MTA - proprietary compound from Pfizer
+
+Pfizer wants to send us a proprietary small molecule under their MTA, with publication review rights and reach-through on results. Can you review by Friday?
+
+--- REQ-08 | 2026-09-23 07:58 | From: newsletter@example.org
+Subject: Fall records management webinar
+
+FYI: free webinar on retention schedules for AI-generated records, Oct 8, 1 pm. Registration link inside. No action required.
+
+--- REQ-09 | 2026-09-23 10:02 | From: Priya Nair <pnair@example.edu>
+Subject: Application - Nair Tutoring Co-op
+
+We're three grad students running a tutoring co-op. We need help with a partnership agreement and a client waiver. We can meet any afternoon next week. > On Sep 20, the intake form said applications close by Friday.
+
+--- REQ-10 | 2026-09-23 12:30 | From: Dining Sustainability Form
+Subject: Form response: South Campus cafe
+
+Pillar: Sustainable Sourcing. Current practice: 40% local produce in season. Goal: 60%. Also want to start a reusable container program (that's a different pillar, sorry).
+
+--- REQ-11 | 2026-09-23 16:44 | From: records.request@example.org
+Subject: FOIA request: email retention policies 2019-2026
+
+Under Michigan FOIA I request all policies, memos and drafts concerning email retention and disposal from January 2019 to present, in electronic form. Please respond within the statutory period.
+
+--- REQ-12 | 2026-09-24 09:09 | From: Dr. Anita Rao <arao@example.edu>
+Subject: Re: MTA request - cell line to Ohio State
+
+Following up - the collaborator's institution is asking for the agreement by the 30th so they can order media. Anything you need from me?
+
+--- REQ-13 | 2026-09-24 11:15 | From: Coach staff <wbb-ops@example.edu>
+Subject: Recruit note - guard, class of 2028
+
+6'0 guard, Detroit Renaissance, 18.2 ppg. Entered in the sheet and ARMS; still needs JustPlay. Transcript pending.
+
+--- REQ-14 | 2026-09-24 15:50 | From: Lucas Ferreira <lferreira@example.edu>
+Subject: Application: app for campus parking
+
+I have an idea for a parking app but haven't formed anything yet and don't have a co-founder. Is the clinic for me? Also do you offer patents?
+
+--- REQ-15 | 2026-09-25 08:05 | From: Sam Okoro <sokoro@example.edu>
+Subject: Re: Limited submission question
+
+Never mind the Sloan one, I'll go for the Packard instead. Same question though: internal deadline?
+

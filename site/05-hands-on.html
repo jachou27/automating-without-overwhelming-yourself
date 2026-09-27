@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hands-on Build</title>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="assets/shared.js"></script>
+<style>
+/* page-only styles; var(--tokens) only */
+.section-body h4.sub{font-size:15px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:26px 0 10px}
+.pill-time{background:var(--maize-bg);border-color:var(--maize);color:var(--maize-ink);font-weight:750}
+.status-demo{display:inline-block;font-weight:750;font-size:.9em;background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn);border-radius:8px;padding:1px 9px;white-space:nowrap}
+
+/* 1 · goal */
+.goal-line{font-size:clamp(20px,2.4vw,25px);font-weight:600;color:var(--ink);margin:4px 0 26px}
+.arc{list-style:none;padding:0;margin:0 0 26px;display:flex;gap:6px}
+.arc li{margin:0;max-width:none;min-width:0;background:var(--surface-2);border-top:6px solid var(--accent);border-radius:10px;padding:12px 10px 14px}
+.arc .s5{flex:5}.arc .s10{flex:10}.arc .s20{flex:20}
+.arc-min{display:block;font-size:34px;font-weight:800;line-height:1;color:var(--heading);font-variant-numeric:tabular-nums}
+.arc-min small{font-size:15px;font-weight:650;color:var(--muted);margin-left:4px}
+.arc-label{display:block;margin-top:8px;font-size:15px;font-weight:650;line-height:1.3;overflow-wrap:anywhere}
+@media (max-width:900px){
+  .arc{flex-direction:column}
+  .arc li{flex:none;display:grid;grid-template-columns:86px 1fr;align-items:center;border-top:0;border-left:6px solid var(--accent);padding:10px 14px}
+  .arc-label{margin-top:0}
+}
+.rules{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.rules li{position:relative;margin:0;padding:12px 16px 12px 52px;background:var(--ok-bg);border-radius:12px;font-size:19px;max-width:none}
+.rules li::before{content:"✓";content:"✓"/"";position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--ok);color:var(--surface);font-size:15px;font-weight:800;display:grid;place-items:center}
+
+/* 2 · sandbox */
+.data-folder{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin:6px 0 22px;padding:18px 20px;border:2px solid var(--accent);border-radius:var(--radius);background:var(--surface-2)}
+.data-folder-label{font-size:14px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.data-folder .btn{display:inline-block;line-height:1.3;white-space:normal;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.sandbox-table td{font-size:17px;vertical-align:middle}
+.sandbox-table td.proj{font-weight:650}
+.sandbox-table code{overflow-wrap:anywhere}
+.shape-tag{display:inline-flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap}
+.shape-tag::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--shape);flex:none}
+@media (max-width:700px){
+  .sandbox-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .sandbox-table,.sandbox-table tbody,.sandbox-table tr,.sandbox-table td{display:block;width:100%}
+  .sandbox-table tr{border-left:5px solid var(--shape);border-bottom:1px solid var(--line);padding:10px 14px}
+  .sandbox-table tbody tr:last-child{border-bottom:0}
+  .sandbox-table td{border:0;padding:2px 0}
+  .sandbox-table td.shape-bar{border-left:0}
+}
+.also{margin:14px 0 0;font-size:16px}
+
+/* 3 · steps */
+ol.steps>li{padding-bottom:30px}
+ol.steps>li:last-child{padding-bottom:6px}
+ol.steps>li>h3{margin:2px 0 12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:23px}
+ol.steps>li ul{margin:6px 0;padding-left:22px;list-style:disc}
+.idea-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:12px 0}
+.idea-grid .card{padding:14px 16px}
+.idea-grid .card h4{margin:0 0 6px;font-size:19px;color:var(--heading);display:flex;align-items:baseline;gap:8px}
+.idea-grid .letter{font-size:36px;font-weight:800;line-height:1;color:var(--maize-ink)}
+.idea-grid p{margin:0;font-size:16px}
+.two-shapes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.two-shapes .card h5{margin:0 0 6px;font-size:19px;color:var(--heading)}
+.two-shapes .card p{margin:6px 0 0;font-size:16px}
+.checks{counter-reset:chk;list-style:none;padding:0;margin:8px 0;display:grid;gap:8px}
+.checks li{counter-increment:chk;position:relative;margin:0;padding:10px 14px 10px 52px;background:var(--surface-2);border-radius:10px;font-size:19px;font-weight:600;max-width:none}
+.checks li::before{content:counter(chk);position:absolute;left:14px;top:10px;width:26px;height:26px;border-radius:50%;border:2px solid var(--accent);color:var(--accent);font-size:14px;font-weight:800;display:grid;place-items:center}
+.traps{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.traps .pill{font-size:16px;padding:6px 14px;background:var(--warn-bg);border-color:var(--warn);color:var(--warn)}
+.decide{font-size:clamp(20px,2.4vw,24px);font-weight:600;margin:10px 0}
+.alt-path{background:var(--surface-2);margin-top:22px}
+.alt-path h3{margin-top:0}
+
+/* 4 · tracks */
+.tracks .card{display:flex;flex-direction:column}
+.track-head{display:flex;align-items:center;gap:12px;margin:0 0 8px}
+.track-letter{width:48px;height:48px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-size:26px;font-weight:800;display:grid;place-items:center;flex:none}
+.track-head h3{margin:0}
+.track-head small{display:block;font-size:13px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tracks ul{padding-left:20px;margin:6px 0 10px}
+.tracks .card>p:last-child{margin-top:auto;margin-bottom:0}
+
+/* 5 · timer */
+.timer{display:grid;gap:18px}
+@media (min-width:900px){.timer{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:start}}
+.timer-main{display:grid;gap:14px;min-width:0}
+.timer-face{container-type:inline-size;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px 22px;text-align:center}
+.timer-status{display:inline-block;font-size:14px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.timer[data-mode="running"] .timer-status{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.timer[data-mode="paused"] .timer-status{background:var(--warn-bg);border-color:var(--warn);color:var(--warn)}
+.timer[data-mode="done"] .timer-status{background:var(--danger-bg);border-color:var(--danger);color:var(--danger)}
+.timer-digits{font-size:clamp(72px,14vw,168px);font-size:clamp(72px,31cqi,200px);font-weight:800;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--heading);margin:14px 0 8px}
+.timer[data-mode="paused"] .timer-digits{color:var(--muted)}
+.timer[data-mode="done"] .timer-digits{color:var(--danger)}
+.timer-bar{height:12px;background:var(--line);border-radius:999px;overflow:hidden;margin:8px 0 0}
+.timer-bar>div{height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .25s linear}
+.timer[data-mode="done"] .timer-bar>div{background:var(--danger)}
+.timer-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px}
+.timer-controls .btn-lg{min-width:112px;justify-content:center}
+.timer-adjust{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.timer-cue{background:var(--maize-bg);border-left:6px solid var(--maize);border-radius:12px;padding:14px 18px;font-size:clamp(20px,2.4vw,25px);font-weight:700;line-height:1.3;color:var(--ink)}
+.timer-cue small{display:block;font-size:13px;font-weight:750;color:var(--maize-ink);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.timer-cue.flash{animation:cueflash 1.2s ease-out 2}
+@keyframes cueflash{0%{outline:4px solid var(--maize);outline-offset:0}100%{outline:4px solid transparent;outline-offset:8px}}
+@media (prefers-reduced-motion:reduce){.timer-cue.flash{animation:none}.timer-bar>div{transition:none}}
+.cps-head{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 4px 8px}
+.cps{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.cps li{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;margin:0;max-width:none;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.cps .cp-min{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;color:var(--heading)}
+.cps .cp-text{font-size:16px;line-height:1.35}
+.cps .cp-badge{font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.05em;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.cps .cp-badge:empty{display:none}
+.cps li[data-state="done"]{opacity:.55}
+.cps li[data-state="done"] .cp-badge{background:var(--ok-bg);color:var(--ok)}
+.cps li[data-state="now"]{border:2px solid var(--accent);background:var(--surface-2);box-shadow:var(--shadow-sm)}
+.cps li[data-state="now"] .cp-badge{background:var(--accent);color:var(--accent-ink)}
+.timer-chip{position:fixed;right:16px;bottom:16px;z-index:21;font-size:16px;font-weight:750;padding:10px 16px;border-radius:999px;background:var(--accent);color:var(--accent-ink);border-color:var(--accent);box-shadow:var(--shadow);max-width:calc(100vw - 32px);font-variant-numeric:tabular-nums}
+.timer-chip[hidden]{display:none}
+
+/* 6 · stuck */
+.stuck{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.stuck .card{font-size:18px}
+.stuck .card h3{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.stuck .card p{margin:0}
+.stuck .num{width:40px;height:40px;border-radius:50%;background:var(--maize);color:var(--accent);font-size:21px;font-weight:800;display:grid;place-items:center;flex:none}
+:root[data-theme="dark"] .stuck .num{color:var(--accent-ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stuck .num{color:var(--accent-ink)}}
+@media print{.timer-chip{display:none}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="page">
+  <a class="brand" href="index.html">Automating Without Overwhelming Yourself</a>
+  <span class="crumb">5 of 6 · 3:20–4:05</span>
+  <nav class="section-nav" aria-label="Workshop sections">
+    <a href="index.html">Outline</a><a href="01-should-you-automate.html">1</a><a href="02-idea-your-projects.html">2</a><a href="03-tools-of-the-trade.html">3</a><a href="04-live-demos.html">4</a><a href="05-hands-on.html" aria-current="page">5</a><a href="06-share-and-close.html">6</a>
+  </nav>
+  <div class="tools">
+    <button type="button" data-expand-all>Expand all</button>
+    <button type="button" data-collapse-all>Collapse all</button>
+    <button type="button" data-present-toggle aria-label="Bigger text for the projector">Bigger text</button>
+    <button type="button" data-theme-toggle aria-label="Switch light or dark">Theme</button>
+  </div>
+</div></header>
+<main class="page">
+  <section class="hero">
+    <div class="kicker">5 · 3:20–4:05 · 45 min, in teams</div>
+    <h1>Build your smallest useful unit</h1>
+    <p class="lede">Your project, on dummy data. Low stakes. Nothing real touches it.</p>
+  </section>
+
+  <!-- 1 -->
+  <details class="section" open>
+    <summary><h2>The goal</h2><span class="meta">45 min</span></summary>
+    <div class="section-body">
+      <p class="big-quote">Build the smallest useful unit for your project, on dummy data.</p>
+      <p class="goal-line">Leave with something that runs. Or a clear spec of what would.</p>
+
+      <ol class="arc" aria-label="The 45 minutes, in five steps">
+        <li class="s5"><span class="arc-min">5<small>min</small></span><span class="arc-label">1 · Form</span></li>
+        <li class="s5"><span class="arc-min">5<small>min</small></span><span class="arc-label">2 · Dummies</span></li>
+        <li class="s10"><span class="arc-min">10<small>min</small></span><span class="arc-label">3 · IDEA pass</span></li>
+        <li class="s20"><span class="arc-min">20<small>min</small></span><span class="arc-label">4 · AI writes the script. You read it, run it.</span></li>
+        <li class="s5"><span class="arc-min">5<small>min</small></span><span class="arc-label">5 · Traps</span></li>
+      </ol>
+
+      <ul class="rules">
+        <li>Dummy data only. Every sandbox file is fake.</li>
+        <li>Client data goes only in tools approved for it, like U-M GPT and Maizey. Today, none of it.</li>
+        <li>Your project's smallest useful unit is a starting point to argue with, not an assignment.</li>
+      </ul>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>Circulate by shape. Intake → triage has six teams (Zell, MTA, Dining, OVPR, Oakland FOIA, CAI), so start there. Then pile → catalog (Ginsberg, FJA), then many sheets → one table (Marsal, Basketball, Michigan Medicine).</p>
+        <p>NDA teams use dummy data only. Client NDA: Oakland County and CAI. UMSI NDA: Zell, OVPR, and the MTA project (with IP). Nothing from a client goes into any tool today.</p>
+        <p>Start the timer once every team has picked a file.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 2 -->
+  <details class="section">
+    <summary><h2>Pick your sandbox file</h2><span class="meta">Step 0</span></summary>
+    <div class="section-body">
+      <p>Find your project. Start with its file. All fake, made for today.</p>
+
+      <div class="data-folder">
+        <span class="data-folder-label">Where the files are</span>
+        <a class="btn btn-primary btn-lg" href="https://drive.google.com/drive/folders/1YOv6oia4dKvwDzNuGzLgGpVrD6Jz7lCF?usp=sharing" target="_blank" rel="noopener noreferrer">Class data folder: UMSI_2026-09-27_Lasisi-workshop <span aria-hidden="true">↗</span><span class="visually-hidden">(opens in a new tab)</span></a><div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span class="qr-mini" style="display:inline-block;background:#fff;border-radius:12px;padding:8px;line-height:0" role="img" aria-label="QR code for the class data folder"><svg width="205" height="205" class="segno"><g transform="scale(5)"><path fill="#fff" d="M0 0h41v41h-41z"/><path class="qrline" stroke="#000" d="M2 2.5h7m1 0h2m2 0h1m3 0h1m3 0h1m5 0h2m2 0h7m-37 1h1m5 0h1m1 0h1m5 0h1m1 0h1m2 0h4m1 0h1m5 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h2m1 0h6m1 0h2m1 0h1m1 0h4m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m4 0h1m2 0h1m2 0h1m2 0h2m1 0h3m1 0h2m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h4m1 0h1m4 0h2m4 0h3m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m3 0h1m1 0h2m2 0h2m2 0h4m2 0h1m3 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-28 1h2m2 0h3m9 0h4m-29 1h1m2 0h9m1 0h5m2 0h1m1 0h3m1 0h2m1 0h1m2 0h1m1 0h3m-37 1h3m1 0h1m2 0h4m1 0h2m2 0h1m2 0h1m5 0h3m1 0h1m1 0h3m1 0h1m-36 1h2m2 0h5m3 0h6m3 0h5m1 0h2m1 0h1m3 0h1m1 0h1m-36 1h1m1 0h1m4 0h1m1 0h1m4 0h1m1 0h3m2 0h1m3 0h2m1 0h3m1 0h4m-36 1h1m2 0h3m2 0h1m2 0h5m2 0h2m2 0h2m2 0h2m1 0h2m1 0h1m2 0h1m-35 1h1m9 0h1m3 0h1m1 0h1m3 0h2m1 0h5m2 0h2m-33 1h8m3 0h4m1 0h3m6 0h5m1 0h5m-34 1h1m5 0h2m3 0h1m1 0h1m2 0h1m3 0h1m3 0h1m1 0h1m1 0h1m1 0h2m-35 1h2m1 0h5m1 0h1m1 0h1m10 0h1m7 0h2m2 0h1m1 0h1m-37 1h1m1 0h1m1 0h2m1 0h1m1 0h1m3 0h3m1 0h4m1 0h1m1 0h1m4 0h3m-32 1h2m1 0h1m1 0h4m1 0h1m1 0h1m1 0h4m1 0h1m2 0h3m2 0h1m1 0h2m3 0h1m1 0h1m-34 1h2m2 0h2m3 0h1m2 0h2m2 0h1m5 0h1m2 0h1m2 0h1m1 0h1m2 0h1m-36 1h1m1 0h7m2 0h2m3 0h1m1 0h1m4 0h1m1 0h8m-34 1h3m4 0h2m2 0h3m3 0h1m1 0h1m1 0h3m2 0h3m3 0h1m1 0h2m-34 1h1m1 0h1m1 0h3m2 0h8m2 0h3m1 0h1m1 0h2m1 0h2m1 0h1m1 0h2m-36 1h1m5 0h1m2 0h3m3 0h5m1 0h1m1 0h1m1 0h1m2 0h7m-31 1h3m1 0h1m5 0h2m4 0h1m1 0h2m2 0h1m2 0h3m3 0h1m-37 1h3m2 0h1m4 0h2m1 0h4m1 0h1m2 0h1m5 0h3m2 0h1m-33 1h3m1 0h3m1 0h2m1 0h1m3 0h1m1 0h6m1 0h5m2 0h1m2 0h3m-37 1h1m1 0h1m1 0h2m1 0h1m1 0h2m2 0h1m2 0h1m1 0h2m3 0h2m1 0h2m1 0h4m1 0h1m1 0h1m-37 1h1m4 0h5m2 0h1m3 0h1m2 0h2m1 0h4m2 0h5m1 0h1m1 0h1m-29 1h3m1 0h1m2 0h3m1 0h1m8 0h1m3 0h1m1 0h1m-35 1h7m1 0h1m1 0h1m1 0h1m2 0h1m1 0h3m2 0h5m1 0h1m1 0h1m1 0h1m3 0h1m-37 1h1m5 0h1m1 0h2m1 0h1m1 0h4m2 0h1m2 0h2m1 0h4m3 0h1m2 0h1m-36 1h1m1 0h3m1 0h1m1 0h5m1 0h1m1 0h2m1 0h3m1 0h1m1 0h8m2 0h1m-36 1h1m1 0h3m1 0h1m1 0h3m1 0h2m1 0h1m3 0h2m1 0h2m5 0h2m2 0h4m-37 1h1m1 0h3m1 0h1m2 0h2m2 0h1m1 0h1m2 0h1m1 0h1m1 0h3m7 0h2m2 0h1m-37 1h1m5 0h1m2 0h3m2 0h4m1 0h2m1 0h1m3 0h1m1 0h2m2 0h5m-37 1h7m1 0h1m4 0h4m1 0h3m2 0h2m1 0h1m1 0h2m1 0h1m1 0h1m2 0h1"/></g></svg></span><a class="btn" href="qr.html" target="_blank" rel="noopener">Full-screen QR ↗</a></div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="sandbox-table">
+          <thead><tr><th scope="col">Your project</th><th scope="col">Shape</th><th scope="col">Start with</th></tr></thead>
+          <tbody>
+            <tr class="shape-1"><td class="proj shape-bar">Zell Entrepreneurship Clinic</td><td><span class="shape-tag shape-text">Intake to triage</span></td><td><code>form_zell_application_responses.csv</code></td></tr>
+            <tr class="shape-1"><td class="proj shape-bar">Innovation Partnerships MTA</td><td><span class="shape-tag shape-text">Intake to triage</span></td><td><code>form_mta_screening_responses.csv</code></td></tr>
+            <tr class="shape-1"><td class="proj shape-bar">Michigan Dining sustainability</td><td><span class="shape-tag shape-text">Intake to triage</span></td><td><code>form_dining_sustainability_responses.csv</code></td></tr>
+            <tr class="shape-1"><td class="proj shape-bar">OVPR limited submissions</td><td><span class="shape-tag shape-text">Intake to triage</span></td><td><code>requests_inbox.csv</code>, or build your own InfoReady-style form</td></tr>
+            <tr class="shape-1"><td class="proj shape-bar">Oakland County FOIA</td><td><span class="shape-tag shape-text">Intake to triage</span></td><td><code>requests_inbox.csv</code></td></tr>
+            <tr class="shape-1"><td class="proj shape-bar">CAI AI Enablement</td><td><span class="shape-tag shape-text">Intake to triage</span></td><td><code>requests_inbox.csv</code></td></tr>
+            <tr class="shape-2"><td class="proj shape-bar">Ginsberg Center archive</td><td><span class="shape-tag shape-text">Pile to catalog</span></td><td><code>shared_drive_dump.csv</code></td></tr>
+            <tr class="shape-2"><td class="proj shape-bar">FJA staff AI portal</td><td><span class="shape-tag shape-text">Pile to catalog</span></td><td><code>terrible_notes.txt</code></td></tr>
+            <tr class="shape-3"><td class="proj shape-bar">Marsal gift funds</td><td><span class="shape-tag shape-text">Many sheets to one table</span></td><td><code>funds_development.csv</code> + <code>funds_finance.csv</code></td></tr>
+            <tr class="shape-3"><td class="proj shape-bar">Women's Basketball</td><td><span class="shape-tag shape-text">Many sheets to one table</span></td><td>Generate two sheets keyed on player (the funds pair is the pattern)</td></tr>
+            <tr class="shape-3"><td class="proj shape-bar">Michigan Medicine Faculty Development</td><td><span class="shape-tag shape-text">Many sheets to one table</span></td><td><code>form_faculty_interest_responses.csv</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="also muted">Also in the folder: <code>team_members.csv</code> (a roster, one document or email per row) and <code>yelp_sample_20.csv</code> (reviews: rating, main issue, needs a reply?, draft reply).</p>
+
+      <div class="callout">
+        <strong>Every file has a few planted problems.</strong> Finding them is part of the exercise.
+      </div>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>Tie each intake team back to demo 1. MTA: the eligibility rule. Dining: the next step is an AI memo draft for review. OVPR: the rubric comes first. Oakland FOIA: exact duplicates. CAI: this is your intake form.</p>
+        <p>Answer keys for the planted problems are in the instructor folder. Don't give them away; let teams find them.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 3 -->
+  <details class="section">
+    <summary><h2>Step by step</h2><span class="meta">5 steps · 45 min</span></summary>
+    <div class="section-body">
+      <ol class="steps">
+        <li>
+          <h3>Build the Google Form <span class="pill pill-time">5 min</span></h3>
+          <ul>
+            <li>New Google Form. Question titles = the CSV header. <strong>The header is the form.</strong></li>
+            <li>Pick short answer, checkbox or dropdown to match the data.</li>
+            <li>Link a responses Sheet: Responses tab → Sheets icon.</li>
+            <li>Submit two or three responses by hand. Watch one land.</li>
+          </ul>
+        </li>
+        <li>
+          <h3>Fill it with dummies <span class="pill pill-time">5 min</span></h3>
+          <ul>
+            <li><strong>Fast:</strong> import the ready-made CSV. On the responses Sheet: File → Import → Append to current sheet.</li>
+            <li><strong>Or make your own</strong> with U-M GPT. Paste this, then paste your CSV header row after it.</li>
+          </ul>
+          <div class="prompt">
+            <div class="prompt-head"><span>U-M GPT: generate dummy responses</span><button type="button" data-copy="prompt-dummies">Copy</button></div>
+            <pre id="prompt-dummies">I am building a test copy of an intake form so I can develop an automation without touching real data. Here are the form's questions, as a CSV header. Generate 15 realistic fake responses as CSV rows with the same columns. Use fake names and @example.edu addresses. Make them varied and messy the way real submissions are: include one duplicate submission from the same person, one response with a required field left blank, one that answers two questions in one box, and one that is clearly outside what the form is for. Do not use any real person or organisation.</pre>
+          </div>
+          <p class="muted">Imported rows don't fire the form-submit trigger. That's fine. Step 4 handles it.</p>
+        </li>
+        <li>
+          <h3>IDEA pass on your sandbox <span class="pill pill-time">10 min</span></h3>
+          <div class="idea-grid">
+            <div class="card"><h4><span class="letter" aria-hidden="true">I</span>Identify</h4><p>What does "done" look like for one submission?</p></div>
+            <div class="card"><h4><span class="letter" aria-hidden="true">D</span>Document</h4><p>Source: the responses Sheet. Transformation: which fields become which output. Output: a doc, an email, a status column, a row in another sheet. What's fixed? What varies?</p></div>
+            <div class="card"><h4><span class="letter" aria-hidden="true">E</span>Experiment</h4><p>The smallest version.</p></div>
+            <div class="card"><h4><span class="letter" aria-hidden="true">A</span>Adjust</h4><p>What breaks?</p></div>
+          </div>
+        </li>
+        <li>
+          <h3>Have AI write the Apps Script <span class="pill pill-time">20 min</span></h3>
+          <h4 class="sub">Ask for two shapes</h4>
+          <div class="two-shapes">
+            <div class="card"><h5>Trigger on submit</h5><p><code>onFormSubmit</code>: one new response, one output.</p><p>Test it: submit a response by hand.</p></div>
+            <div class="card"><h5>Process the backlog</h5><p>Walks every row with an empty Status. Does the work. Writes "done" and a timestamp.</p><p>You need this one: imported rows never fire the trigger.</p></div>
+          </div>
+          <h4 class="sub">The prompt shape</h4>
+          <ul>
+            <li>Describe the columns.</li>
+            <li>Paste three sample rows.</li>
+            <li>Say what output you want.</li>
+            <li>Ask for the code <strong>and</strong> a plain-English explanation of each section.</li>
+          </ul>
+          <div class="prompt">
+            <div class="prompt-head"><span>Prompt skeleton: fill in the brackets</span><button type="button" data-copy="prompt-script">Copy</button></div>
+            <pre id="prompt-script">I have a Google Sheet of form responses (fake test data).
+The columns are: [list each column and what it holds].
+
+Here are three sample rows:
+[paste three rows]
+
+For each row I want: [the output: a status column, a doc, an email draft, a row in another sheet].
+
+Write a Google Apps Script with two functions:
+1. One that runs on form submit and handles the new response.
+2. One that processes the backlog: every row whose Status column is empty. It does the work, then writes "done" and a timestamp.
+
+Give me the code and a plain-English explanation of each section.</pre>
+          </div>
+          <h4 class="sub">Before you run it, three checks</h4>
+          <ol class="checks">
+            <li>What is the loop?</li>
+            <li>Where would a new field go?</li>
+            <li>What tools and permissions does it need?</li>
+          </ol>
+          <div class="callout">
+            <strong>Then run it.</strong> Paste it into Extensions → Apps Script and run. Authorize when asked. That screen is the permissions lesson, live. Read it: it lists every key you hand over.
+          </div>
+          <details class="notes"><summary>Speaker notes</summary>
+            <p>The authorization prompt is the payoff of the permissions talk at 2:30. "It acts as you." Ask a team to read their consent screen aloud.</p>
+          </details>
+        </li>
+        <li>
+          <h3>Hit the planted problems <span class="pill pill-time">5 min</span></h3>
+          <div class="traps">
+            <span class="pill">The duplicate</span>
+            <span class="pill">The blank field</span>
+            <span class="pill">Two answers in one box</span>
+          </div>
+          <p class="decide">For each one, decide: <strong>a rule, or manual review?</strong></p>
+          <p>Add a <span class="status-demo">needs review</span> status, with a reason, rather than guessing.</p>
+        </li>
+      </ol>
+
+      <div class="card alt-path">
+        <h3>No form in your project?</h3>
+        <p>Skip the form. Paste the dummy file into U-M GPT: the requests inbox, the drive listing, or the two sheets. Add a short spec of what you want for each item. Ask for a table back.</p>
+        <p>Then the same IDEA pass, and the same traps check.</p>
+      </div>
+    </div>
+  </details>
+
+  <!-- 4 -->
+  <details class="section">
+    <summary><h2>Two tracks</h2><span class="meta">Pick one</span></summary>
+    <div class="section-body">
+      <div class="grid tracks">
+        <div class="card">
+          <div class="track-head"><span class="track-letter" aria-hidden="true">A</span><h3><small>Track A</small> No install</h3></div>
+          <ul>
+            <li>Google Form + Sheet + Apps Script.</li>
+            <li>U-M GPT writes the script.</li>
+            <li>You read it, check it, run it.</li>
+          </ul>
+          <p class="muted">Everyone can do this one.</p>
+        </div>
+        <div class="card">
+          <div class="track-head"><span class="track-letter" aria-hidden="true">B</span><h3><small>Track B</small> Agent on your laptop</h3></div>
+          <ul>
+            <li>Claude Code, Claude Cowork or Codex, only if your team already has one.</li>
+            <li>Work in a folder that holds only dummy data.</li>
+            <li>Give that folder a house-rules file: <code>CLAUDE.md</code> for Claude Code, <code>AGENTS.md</code> for Codex.</li>
+            <li>Keep it on ask-before-acting.</li>
+          </ul>
+          <p><a href="03-tools-of-the-trade.html">House rules and tool choice: 3 · Tools of the trade</a></p>
+        </div>
+      </div>
+      <details class="reveal">
+        <summary>The house rules I used for the demos</summary>
+        <div class="prompt">
+          <div class="prompt-head"><span>CLAUDE.md / AGENTS.md</span><button type="button" data-copy="house-rules">Copy</button></div>
+          <pre id="house-rules"># House rules for this folder
+
+Everything in this folder is dummy data made for a workshop. Treat it as if it were real.
+
+- Work only inside this folder. Don't read or write anywhere else.
+- The CSV files you were given are originals. Never edit them; write new files next to them.
+- Before you run any code, explain in plain English what it will do.
+- Put exact checks (duplicates, blanks, formats, dates) in code. Use your own judgment only where I ask
+  for it, and say which is which.
+- When a row doesn't fit the rules, mark it "needs review" with a reason. Don't guess.
+- Never send email, post, or upload anything.</pre>
+        </div>
+      </details>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>CAI said they want Claude Code and Codex experience. If they have it, point them at Track B. Everyone else: Track A.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 5 -->
+  <details class="section" id="timer-section">
+    <summary><h2>Timer</h2><span class="meta" id="timer-meta">45:00</span></summary>
+    <div class="section-body">
+      <div class="timer" id="timer" data-mode="idle">
+        <div class="timer-main">
+          <div class="timer-face">
+            <div class="timer-status" id="timer-status">Ready</div>
+            <div class="timer-digits" id="timer-digits" role="timer" aria-label="Time left">45:00</div>
+            <div class="timer-bar" aria-hidden="true"><div id="timer-fill"></div></div>
+            <div class="timer-controls">
+              <button type="button" class="btn btn-primary btn-lg" id="timer-start">Start</button>
+              <button type="button" class="btn btn-lg" id="timer-pause" disabled>Pause</button>
+              <button type="button" class="btn btn-lg" id="timer-reset">Reset</button>
+            </div>
+            <div class="timer-adjust">
+              <button type="button" class="btn" id="timer-minus">−1 min</button>
+              <button type="button" class="btn" id="timer-plus">+1 min</button>
+            </div>
+          </div>
+          <p class="visually-hidden" id="timer-live" aria-live="polite" aria-atomic="true"></p>
+          <div class="timer-cue" id="timer-cue"><small id="timer-cue-when">Now</small><span id="timer-cue-text">Pick your file. Build the form from the header.</span></div>
+        </div>
+        <div>
+          <div class="cps-head" aria-hidden="true"><span>Min left</span><span>Where you should be</span></div>
+          <ol class="cps" id="timer-cps" aria-label="Checkpoints">
+            <li data-at="45"><span class="cp-min">45</span><span class="cp-text">Pick your file. Build the form from the header.</span><span class="cp-badge"></span></li>
+            <li data-at="40"><span class="cp-min">40</span><span class="cp-text">Form built. Fill it with dummies.</span><span class="cp-badge"></span></li>
+            <li data-at="35"><span class="cp-min">35</span><span class="cp-text">Dummies in. Do the IDEA pass.</span><span class="cp-badge"></span></li>
+            <li data-at="25"><span class="cp-min">25</span><span class="cp-text">IDEA done. Prompt the AI. Read the script. Three checks.</span><span class="cp-badge"></span></li>
+            <li data-at="10"><span class="cp-min">10</span><span class="cp-text">Run it. Authorize. Hit the traps.</span><span class="cp-badge"></span></li>
+            <li data-at="5"><span class="cp-min">5</span><span class="cp-text">Rule or manual review? Pick what you'll share.</span><span class="cp-badge"></span></li>
+            <li data-at="0"><span class="cp-min">0</span><span class="cp-text">Time. Share-out is next.</span><span class="cp-badge"></span></li>
+          </ol>
+        </div>
+      </div>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>The timer keeps running if you click to another page and back. A small clock stays in the corner while it runs. Use −1 / +1 if we start late.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 6 -->
+  <details class="section">
+    <summary><h2>Stuck?</h2><span class="meta">Three moves</span></summary>
+    <div class="section-body">
+      <div class="stuck">
+        <div class="card"><h3><span class="num" aria-hidden="true">1</span>Shrink the unit</h3><p>One row. One field. One status. Get that to run first.</p></div>
+        <div class="card"><h3><span class="num" aria-hidden="true">2</span>Paste the error back</h3><p>Give the AI the exact error. Ask it to explain in plain English, then fix it.</p></div>
+        <div class="card"><h3><span class="num" aria-hidden="true">3</span>Mark it and move on</h3><p>Can't decide a row? Mark it <span class="status-demo">needs review</span> and keep going.</p></div>
+      </div>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>At 4:05 call time and move to share-outs: three or four teams, two minutes each. What did you automate? What did it hit? What stays manual?</p>
+      </details>
+    </div>
+  </details>
+
+  <nav class="pager" aria-label="Sections">
+    <a href="04-live-demos.html">← 4 · Three live demos</a>
+    <a href="index.html">Outline</a>
+    <a href="06-share-and-close.html">6 · Share-out and close →</a>
+  </nav>
+</main>
+
+<button type="button" class="timer-chip" id="timer-chip" hidden title="Show the timer"></button>
+
+<script>
+(function(){
+  /* 45-minute countdown */
+  var TOTAL=45*60*1000,MAX=99*60*1000,KEY='aw:hands-on-timer-v1';
+  var CUES=[
+    {at:45,short:'Build the form',text:'Pick your file. Build the form from the header.'},
+    {at:40,short:'Dummies',text:'Form built. Fill it with dummies.'},
+    {at:35,short:'IDEA pass',text:'Dummies in. Do the IDEA pass.'},
+    {at:25,short:'AI writes the script',text:'IDEA done. Prompt the AI. Read the script. Three checks.'},
+    {at:10,short:'Run it, hit the traps',text:'Run it. Authorize. Hit the traps.'},
+    {at:5,short:'Pick your share',text:'Rule or manual review? Pick what you\'ll share.'},
+    {at:0,short:'Time',text:'Time. Share-out is next.'}
+  ];
+  var $=function(id){return document.getElementById(id);};
+  var box=$('timer'),digits=$('timer-digits'),status=$('timer-status'),fill=$('timer-fill'),meta=$('timer-meta'),
+      bStart=$('timer-start'),bPause=$('timer-pause'),bReset=$('timer-reset'),bMinus=$('timer-minus'),bPlus=$('timer-plus'),
+      live=$('timer-live'),cue=$('timer-cue'),cueWhen=$('timer-cue-when'),cueText=$('timer-cue-text'),
+      cps=[].slice.call(document.querySelectorAll('#timer-cps li')),chip=$('timer-chip'),section=$('timer-section');
+  if(!box)return;
+
+  var st={mode:'idle',left:TOTAL,endAt:0};
+  var lastMinute=null,lastStage=null,tick=null,digitsVisible=false;
+
+  function load(){
+    try{
+      var raw=localStorage.getItem(KEY);if(!raw)return;
+      var s=JSON.parse(raw);
+      if(s&&(s.mode==='idle'||s.mode==='running'||s.mode==='paused'||s.mode==='done')){
+        st.mode=s.mode;st.left=Math.max(0,Math.min(MAX,+s.left||0));st.endAt=+s.endAt||0;
+      }
+    }catch(e){}
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  function remaining(){
+    if(st.mode==='running')return Math.max(0,st.endAt-Date.now());
+    return st.left;
+  }
+  function fmt(ms){
+    var s=Math.ceil(ms/1000),m=Math.floor(s/60),r=s%60;
+    return m+':'+(r<10?'0':'')+r;
+  }
+  function stageFor(ms){
+    var m=ms/60000,idx=0;
+    for(var i=0;i<CUES.length;i++){if(CUES[i].at>=m)idx=i;}
+    return idx;
+  }
+  function render(fromTick){
+    var ms=remaining();
+    if(st.mode==='running'&&ms<=0){st.mode='done';st.left=0;save();stopTick();}
+    var text=fmt(ms);
+    digits.textContent=text;
+    if(meta)meta.textContent=text;
+    box.setAttribute('data-mode',st.mode);
+    status.textContent={idle:'Ready',running:'Running',paused:'Paused',done:'Time is up'}[st.mode];
+    fill.style.width=Math.max(0,Math.min(100,(1-ms/TOTAL)*100))+'%';
+    bStart.disabled=(st.mode==='running'||st.mode==='done');
+    bStart.textContent=(st.mode==='paused')?'Resume':'Start';
+    bPause.disabled=(st.mode!=='running');
+
+    var stage=stageFor(ms),c=CUES[stage];
+    cueText.textContent=c.text;
+    cueWhen.textContent=(st.mode==='idle')?'First':(st.mode==='done'?'Done':'Now');
+    cps.forEach(function(li,i){
+      var state=i<stage?'done':(i===stage?'now':'next');
+      li.setAttribute('data-state',state);
+      if(state==='now')li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');
+      li.querySelector('.cp-badge').textContent=state==='done'?'✓ Done':(state==='now'?'Now':'');
+    });
+
+    /* Live announcement: whole-minute changes only, while counting. */
+    var minute=Math.ceil(Math.ceil(ms/1000)/60);
+    if(fromTick&&lastMinute!==null&&minute!==lastMinute){
+      var msg=minute===0?'Time is up. Share-out is next.':(minute+(minute===1?' minute':' minutes')+' left.');
+      if(stage!==lastStage&&minute!==0)msg+=' '+c.text;
+      live.textContent=msg;
+    }
+    if(fromTick&&lastStage!==null&&stage!==lastStage){
+      cue.classList.remove('flash');void cue.offsetWidth;cue.classList.add('flash');
+    }
+    lastMinute=minute;lastStage=stage;
+
+    /* Corner chip while the clock is live and the big digits are off screen. */
+    var active=(st.mode==='running'||st.mode==='paused'||st.mode==='done');
+    chip.textContent=text+' · '+(st.mode==='paused'?'Paused':c.short);
+    chip.hidden=!active||digitsVisible;
+  }
+  function startTick(){if(!tick)tick=setInterval(function(){render(true);},250);}
+  function stopTick(){if(tick){clearInterval(tick);tick=null;}}
+
+  bStart.addEventListener('click',function(){
+    if(st.mode==='running'||st.mode==='done')return;
+    st.endAt=Date.now()+st.left;st.mode='running';save();render(false);startTick();
+  });
+  bPause.addEventListener('click',function(){
+    if(st.mode!=='running')return;
+    st.left=remaining();st.mode='paused';save();stopTick();render(false);
+  });
+  bReset.addEventListener('click',function(){
+    stopTick();st={mode:'idle',left:TOTAL,endAt:0};save();lastMinute=null;lastStage=null;live.textContent='';render(false);
+  });
+  function adjust(d){
+    if(st.mode==='running'){
+      var left=Math.max(0,Math.min(MAX,remaining()+d));st.endAt=Date.now()+left;
+    }else{
+      st.left=Math.max(0,Math.min(MAX,st.left+d));
+      if(st.mode==='done'&&st.left>0)st.mode='paused';
+      if((st.mode==='idle'||st.mode==='paused')&&st.left===0)st.mode='done';
+    }
+    save();render(false);
+  }
+  bMinus.addEventListener('click',function(){adjust(-60000);});
+  bPlus.addEventListener('click',function(){adjust(60000);});
+  chip.addEventListener('click',function(){
+    if(section)section.open=true;
+    (section||box).scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(function(){bStart.disabled?bReset.focus():bStart.focus();},400);
+  });
+
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(en){digitsVisible=en.isIntersecting;});
+      render(false);
+    }).observe(digits);
+  }
+  document.addEventListener('visibilitychange',function(){render(false);});
+
+  load();
+  render(false);
+  if(st.mode==='running')startTick();
+})();
+</script>
+</body>
+</html>

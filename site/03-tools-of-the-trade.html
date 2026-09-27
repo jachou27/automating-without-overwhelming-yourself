@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools of the Trade</title>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="assets/shared.js"></script>
+<style>
+/* Page-only styles for 3 · Tools of the trade. var(--tokens) only. Sizes in em scale with "Bigger text". */
+.section-body{font-size:1.08em}
+.section-body details.notes{font-size:.8em}
+.section-body h3{font-size:1.15em}
+.section-body table{font-size:.84em}
+.section-body tbody th{font-size:1em;text-transform:none;letter-spacing:0;font-weight:700;color:var(--heading);background:transparent;min-width:11em}
+.grid{grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr))}
+.lead-in{font-size:1.1em;margin:4px 0 14px}
+.hero .lede{max-width:64ch}
+
+/* Pace strip under the hero */
+ol.pace{list-style:none;margin:22px 0 4px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+ol.pace li{margin:0;max-width:none}
+ol.pace a{display:inline-flex;align-items:baseline;gap:8px;font-size:.8em;font-weight:650;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 13px;box-shadow:var(--shadow-sm)}
+ol.pace a:hover{border-color:var(--accent)}
+ol.pace a span{font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* 1 · Agent cards */
+.agents{margin-top:6px}
+.agent{display:flex;flex-direction:column;border-top:6px solid var(--shape,var(--accent));padding-top:18px}
+.agent-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 10px}
+.agent h3{font-size:1.35em;margin:0}
+.agent .maker{font-size:.78em;font-weight:650;color:var(--shape,var(--muted))}
+.agent .tagline{margin:4px 0 8px;font-size:.95em;color:var(--muted)}
+.agent .pill{align-self:flex-start;margin:0 0 6px}
+dl.facts{margin:0}
+dl.facts dt{font-size:.66em;font-weight:750;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:12px}
+dl.facts dd{margin:2px 0 0;font-size:.9em;line-height:1.45}
+dl.facts dd.first-use{background:var(--surface-2);border-radius:8px;padding:8px 10px;margin-top:4px}
+.data-line{margin-top:18px}
+.data-line p{margin:0;max-width:none}
+
+/* 2 · Permissions */
+.points{list-style:none;padding:0;margin:8px 0 18px;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
+.points>li{max-width:none;margin:0;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.points>li strong{display:block;font-size:1.08em;color:var(--heading)}
+.points>li span{display:block;font-size:.92em}
+.ladder-wrap{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px;align-items:start;margin:10px 0 18px}
+@media (max-width:760px){.ladder-wrap{grid-template-columns:minmax(0,1fr)}}
+.ladder{display:flex;flex-direction:column-reverse;gap:10px;padding:12px 14px;border-left:6px solid var(--line);border-right:6px solid var(--line);border-radius:4px}
+.ladder-hint{font-size:.8em;color:var(--muted);margin:0 0 6px}
+button.rung{width:100%;justify-content:space-between;font-size:1.05em;font-weight:700;padding:13px 16px;border-width:2px;border-radius:10px}
+button.rung .num{font-size:.7em;font-weight:700;color:var(--muted);margin-right:8px}
+button.rung[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.rung[aria-pressed="true"] .num{color:var(--accent-ink)}
+button.rung .tag{font-size:.68em;font-weight:700;padding:2px 9px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.rule-line{border-top:3px dashed var(--maize);border-bottom:3px dashed var(--maize);background:var(--maize-bg);color:var(--maize-ink);font-weight:750;font-size:.85em;text-align:center;padding:7px 8px;border-radius:6px}
+.rung-detail{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;min-height:230px}
+.rung-detail h3{margin:0 0 6px;font-size:1.3em}
+.rung-detail p{margin:8px 0}
+.rung-detail .example{font-style:italic}
+.rung-detail .rule{font-weight:700;color:var(--heading)}
+.risk{display:inline-block;font-size:.75em;font-weight:700;padding:2px 10px;border-radius:999px;border:1px solid var(--line)}
+.risk-lower{background:var(--ok-bg);color:var(--ok)}
+.risk-medium{background:var(--warn-bg);color:var(--warn)}
+.risk-high,.risk-highest{background:var(--danger-bg);color:var(--danger)}
+.asks .card h3{font-size:1.1em;margin:0 0 6px}
+.asks .card p{font-size:.9em;margin:6px 0}
+.asks .card code{white-space:nowrap}
+.scopes{margin-top:18px}
+.scopes-label{margin:0;font-size:.72em;font-weight:750;letter-spacing:.07em;text-transform:uppercase;color:var(--maize-ink)}
+.scopes .big-quote,.run-callout .big-quote{font-size:clamp(20px,2.6vw,27px);border-left:0;padding-left:0;margin:6px 0 2px}
+.run-callout p{margin:0}
+.run-callout p+p{margin-top:8px}
+
+/* 3 · House rules */
+.rules-files{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:10px;margin:8px 0 12px}
+.rules-files .card{padding:12px 14px}
+.rules-files .card p{margin:4px 0 0;font-size:.88em}
+.rules-files .card .file{font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;font-weight:750;font-size:1.02em;color:var(--heading)}
+
+/* 4 · Run ladder */
+.run-axis{display:flex;justify-content:space-between;gap:12px;font-size:.72em;font-weight:750;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+ol.runlad{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:10px}
+ol.runlad>li{max-width:none;margin:0 0 0 calc(var(--i,0) * 30px);display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:var(--radius);padding:14px 18px;box-shadow:var(--shadow-sm);transition:border-color .15s,box-shadow .15s}
+@media (max-width:760px){ol.runlad>li{margin-left:0;padding:12px 14px;gap:6px;grid-template-columns:minmax(0,1fr)}.run-letter{width:1.9em;height:1.9em}}
+ol.runlad>li.is-match{border-color:var(--accent);border-left-color:var(--accent);box-shadow:var(--shadow)}
+.run-letter{width:2.1em;height:2.1em;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--accent);color:var(--accent-ink)}
+ol.runlad h3{margin:2px 0 4px;font-size:1.12em}
+ol.runlad p{margin:4px 0;font-size:.92em;max-width:none}
+.run-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.laptop{display:inline-block;font-size:.72em;font-weight:750;padding:3px 10px;border-radius:999px;border:1px solid var(--line)}
+.laptop.on{background:var(--warn-bg);color:var(--warn)}
+.laptop.off{background:var(--ok-bg);color:var(--ok)}
+.laptop.mixed{background:var(--surface-2);color:var(--ink)}
+.run-tags .pill{font-size:.72em}
+ul.subopts{margin:6px 0 0;padding-left:1.1em;font-size:.9em}
+ul.subopts li{margin:4px 0;max-width:none}
+
+.picker-box{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin:18px 0}
+.picker-box h3{margin:0 0 4px}
+.picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:10px;margin:10px 0}
+.picker button{width:100%;justify-content:center;text-align:center;font-size:.95em;padding:12px 14px;border-width:2px;min-height:3.2em}
+.picker button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.pick-out{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:12px 16px;min-height:4.2em}
+.pick-out p{margin:4px 0;max-width:none}
+.pick-out .rec{font-size:1.15em;font-weight:750;color:var(--heading)}
+
+.cron-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));gap:16px;margin:12px 0}
+.cron{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:8px 0 6px}
+.cron-f{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}
+.cron-f code{display:block;background:none;padding:0;font-size:1.6em;font-weight:750;color:var(--heading)}
+.cron-f span{display:block;font-size:.66em;line-height:1.25;color:var(--muted);margin-top:2px}
+.cron-eq{font-weight:750;font-size:1.05em;margin:6px 0}
+.snippet h3{margin-top:0}
+
+/* 5 · Chooser */
+form.chooser{display:grid;gap:12px;margin:12px 0;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr))}
+fieldset.q{border:1px solid var(--line);border-radius:12px;padding:10px 14px 12px;margin:0;background:var(--surface-2);min-width:0}
+fieldset.q legend{font-weight:700;font-size:1em;padding:0 6px}
+.yn{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.yn label{display:inline-flex;align-items:center;gap:8px;font-size:.95em;border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 16px;cursor:pointer}
+.yn label:has(input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.yn input{accent-color:var(--accent);width:20px;height:20px;margin:0}
+.chooser-actions{display:flex;gap:8px;flex-wrap:wrap;grid-column:1/-1}
+.result{border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:12px;background:var(--surface);padding:14px 18px;margin:12px 0;box-shadow:var(--shadow-sm)}
+.result .label{font-size:.72em;font-weight:750;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0}
+.result dl{margin:6px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px}
+.result dt{font-weight:750;color:var(--muted);font-size:.85em;padding-top:2px}
+.result dd{margin:0}
+.result dd.rec{font-size:1.2em;font-weight:750;color:var(--heading)}
+@media (max-width:520px){.result dl{grid-template-columns:minmax(0,1fr)}.result dt{padding-top:6px}}
+.result p{margin:8px 0;max-width:none}
+.result .caution{border-left:4px solid var(--warn);background:var(--warn-bg);border-radius:6px;padding:8px 12px}
+.result .always{font-weight:600;background:var(--maize-bg);border-radius:8px;padding:8px 12px}
+ol.rules li{margin:6px 0}
+ol.rules li.fired{font-weight:700}
+ol.rules li.fired::after{content:"  ← this one";color:var(--link)}
+
+/* 6 · Scenarios */
+.scenario h3{margin:0 0 4px}
+.scenario .env{font-size:.9em;color:var(--muted);margin:0}
+.scenario details.reveal{margin:10px 0 0}
+
+/* 7 · APIs */
+pre.json{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:.95em;line-height:1.6;white-space:pre-wrap;word-wrap:break-word;margin:10px 0}
+pre.json code{background:none;padding:0;font-size:1em}
+pre.json .k{color:var(--shape1);font-weight:700}
+pre.json .v{color:var(--shape2)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:12px;margin:10px 0}
+.two .card h3{margin:0 0 4px}
+ul.asks-list{margin:6px 0 0;padding-left:1.2em}
+.translate{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:10px 0}
+.translate .box{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;flex:1 1 220px}
+.translate .box small{display:block;font-size:.7em;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.translate .arrow{font-size:1.3em;color:var(--muted);flex:none}
+.translate .ai{flex:0 0 auto;font-weight:700;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:6px 14px}
+
+.checked-note{font-size:.8em;margin:26px 0 0}
+ul.doc-links{margin:6px 0 0;padding-left:1.1em;font-size:.9em}
+ul.doc-links li{margin:4px 0}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="page">
+  <a class="brand" href="index.html">Automating Without Overwhelming Yourself</a>
+  <span class="crumb">3 of 6 · 2:30–2:45</span>
+  <nav class="section-nav" aria-label="Workshop sections">
+    <a href="index.html">Outline</a><a href="01-should-you-automate.html">1</a><a href="02-idea-your-projects.html">2</a><a href="03-tools-of-the-trade.html" aria-current="page">3</a><a href="04-live-demos.html">4</a><a href="05-hands-on.html">5</a><a href="06-share-and-close.html">6</a>
+  </nav>
+  <div class="tools">
+    <button type="button" data-expand-all>Expand all</button>
+    <button type="button" data-collapse-all>Collapse all</button>
+    <button type="button" data-present-toggle aria-label="Bigger text for the projector">Bigger text</button>
+    <button type="button" data-theme-toggle aria-label="Switch light or dark">Theme</button>
+  </div>
+</div></header>
+<main class="page">
+  <section class="hero">
+    <div class="kicker">3 · 2:30–2:45 · 15-minute tour</div>
+    <h1>Tools of the trade</h1>
+    <p class="lede">Three agents that work on files on your computer: Claude Code, Claude Cowork and Codex. What they can touch, and the ways to make an automation run without you.</p>
+    <ol class="pace" aria-label="Sections on this page">
+      <li><a href="#agents" data-open-target>The agents <span>3 min</span></a></li>
+      <li><a href="#permissions" data-open-target>What it can touch <span>4 min</span></a></li>
+      <li><a href="#house-rules" data-open-target>House rules <span>1 min</span></a></li>
+      <li><a href="#run" data-open-target>Ways to run it <span>4 min</span></a></li>
+      <li><a href="#chooser-section" data-open-target>Which setup? <span>2 min</span></a></li>
+      <li><a href="#four-questions" data-open-target>Four questions <span>1 min</span></a></li>
+      <li><a href="#apis" data-open-target>APIs <span>optional</span></a></li>
+    </ol>
+  </section>
+
+  <!-- 1 · The agents -->
+  <details class="section" id="agents" open>
+    <summary><h2>The agents</h2><span class="meta">3 min</span></summary>
+    <div class="section-body">
+      <p class="lead-in">A chat assistant only sees what you paste in. An agent works in your files, runs commands, and acts with your keys.</p>
+      <div class="grid agents">
+        <article class="card agent shape-1">
+          <div class="agent-head"><h3>Claude Code</h3><span class="maker">Anthropic</span></div>
+          <p class="tagline">A coding agent that works in a project folder.</p>
+          <span class="pill">Today's demos</span>
+          <dl class="facts">
+            <dt>What it is</dt>
+            <dd>Reads your files, edits them, and runs commands.</dd>
+            <dt>Where it runs</dt>
+            <dd>The terminal, VS Code and JetBrains, the Claude Desktop app, and the web.</dd>
+            <dt>What it can touch</dt>
+            <dd>Files in your project and commands on your computer. Its permission mode decides when it stops to ask.</dd>
+            <dt>House rules</dt>
+            <dd><code>CLAUDE.md</code>, read at the start of every session. It can also read <code>AGENTS.md</code>.</dd>
+            <dt>Good first use</dt>
+            <dd class="first-use">Intake to triage: a short script that gives every form response a status. That's demo 1.</dd>
+          </dl>
+        </article>
+
+        <article class="card agent shape-2">
+          <div class="agent-head"><h3>Claude Cowork</h3><span class="maker">Anthropic</span></div>
+          <p class="tagline">The agent mode in the Claude app, for knowledge work on your files.</p>
+          <span class="pill">No terminal</span>
+          <dl class="facts">
+            <dt>What it is</dt>
+            <dd>Works across your files and apps, and can finish a piece of work while you do something else.</dd>
+            <dt>Where it runs</dt>
+            <dd>The Claude Desktop app. Since July 2026, also on claude.ai on the web and on mobile.</dd>
+            <dt>What it can touch</dt>
+            <dd>Folders you connect, with the permissions you set. A built-in browser that opens sites, reads pages, clicks, types and fills forms. It asks before it acts.</dd>
+            <dt>House rules</dt>
+            <dd>Keep a rules file in the connected folder, and start each task with “Read the rules file first.”</dd>
+            <dt>Good first use</dt>
+            <dd class="first-use">Pile to catalog: list what's in a folder and flag the duplicates, with no code on your side.</dd>
+          </dl>
+        </article>
+
+        <article class="card agent shape-3">
+          <div class="agent-head"><h3>Codex</h3><span class="maker">OpenAI</span></div>
+          <p class="tagline">OpenAI's coding agent.</p>
+          <span class="pill">Folder is ready for it</span>
+          <dl class="facts">
+            <dt>What it is</dt>
+            <dd>Reads your code, makes edits, and runs commands.</dd>
+            <dt>Where it runs</dt>
+            <dd>The terminal (Codex CLI); VS Code, Cursor and Windsurf; the Codex view in the ChatGPT desktop app, where the Codex app moved on July 9; and Codex cloud at chatgpt.com/codex.</dd>
+            <dt>What it can touch</dt>
+            <dd>By default, the working folder: there it edits and runs commands without asking. It asks before it edits files outside that folder or runs anything that needs the network.</dd>
+            <dt>House rules</dt>
+            <dd><code>AGENTS.md</code>, read before it starts work. A file in a deeper folder overrides one higher up.</dd>
+            <dt>Good first use</dt>
+            <dd class="first-use">Many sheets to one table: a merge script that joins two exports on a shared key. That's demo 3's shape.</dd>
+          </dl>
+        </article>
+      </div>
+
+      <div class="callout warn data-line">
+        <p><strong>An agent sees whatever is in the folder you give it.</strong> Today it only gets dummy data, from the <a href="https://drive.google.com/drive/folders/1YOv6oia4dKvwDzNuGzLgGpVrD6Jz7lCF?usp=sharing" target="_blank" rel="noopener">class data folder</a>. Client data goes only into tools the client and U-M approve, such as U-M GPT and Maizey, as Michael Hess covered earlier today.</p>
+      </div>
+
+      <details class="notes"><summary>Speaker notes · 2:30 to 2:33</summary>
+        <p>One idea across all three cards: an agent works in your files and holds your keys. A chat assistant like U-M GPT only sees what you paste.</p>
+        <p>The demos run in Claude Code. The Codex CLI isn't installed on this Mac; the demo folder has an <code>AGENTS.md</code>, so it is ready for Codex. Cowork is the option for teams who don't want a terminal.</p>
+        <p>Read the dummy-data line aloud, then move on. Don't re-teach Michael's material on approved tools.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 2 · What your agent can touch -->
+  <details class="section" id="permissions">
+    <summary><h2>What your agent can touch</h2><span class="meta">4 min</span></summary>
+    <div class="section-body">
+      <ul class="points">
+        <li><strong>It acts as you.</strong><span>It signs in with your account, so it can do what you can do. Connectors like Gmail, Drive and Calendar ask for access on a consent screen. Read that screen: it lists every key you hand over.</span></li>
+        <li><strong>Read → draft → send → delete.</strong><span>Each step up is a bigger key. Start at read. Add a step only after you've watched the one below it work.</span></li>
+      </ul>
+
+      <h3 id="ladder-heading">The email ladder</h3>
+      <div class="ladder-wrap">
+        <div>
+          <p class="ladder-hint" id="ladder-hint">Click a rung. Read is at the bottom.</p>
+          <div class="ladder" role="group" aria-labelledby="ladder-heading" aria-describedby="ladder-hint">
+            <button type="button" class="rung" data-rung="read" aria-pressed="false" aria-controls="rung-detail"><span><span class="num">1</span>Read</span><span class="tag">Start here</span></button>
+            <button type="button" class="rung" data-rung="draft" aria-pressed="false" aria-controls="rung-detail"><span><span class="num">2</span>Draft</span><span class="tag">My limit</span></button>
+            <div class="rule-line">My rule: Drafts only. Sending stays manual.</div>
+            <button type="button" class="rung" data-rung="send" aria-pressed="false" aria-controls="rung-detail"><span><span class="num">3</span>Send</span><span class="tag">Stays manual</span></button>
+            <button type="button" class="rung" data-rung="delete" aria-pressed="false" aria-controls="rung-detail"><span><span class="num">4</span>Delete</span><span class="tag">Stays manual</span></button>
+          </div>
+        </div>
+        <div class="rung-detail" id="rung-detail" aria-live="polite">
+          <h3>Pick a rung</h3>
+          <p>Each one shows what that permission lets an agent do with your email, an example request, and the risk.</p>
+        </div>
+      </div>
+
+      <h3>It asks before it acts</h3>
+      <div class="grid asks">
+        <div class="card shape-bar shape-1">
+          <h3>Claude Code</h3>
+          <p>Permission modes. <strong>Default</strong> asks before every edit and command. <strong>Auto</strong> uses classifiers to approve some steps for you.</p>
+          <p class="muted">Since August 14, Auto is the default on Pro, Max and Team plans. Check which mode you're in.</p>
+        </div>
+        <div class="card shape-bar shape-2">
+          <h3>Claude Cowork</h3>
+          <p>Asks permission for actions, like Claude Code. It reaches only the folders you connected, with the permissions you set.</p>
+        </div>
+        <div class="card shape-bar shape-3">
+          <h3>Codex</h3>
+          <p>Two dials. <strong>Sandbox</strong>: <code>read-only</code>, <code>workspace-write</code> or <code>danger-full-access</code>. <strong>Approval</strong>: <code>on-request</code> or <code>never</code>.</p>
+          <p class="muted">The default preset, <strong>Auto</strong>, is <code>workspace-write</code> plus <code>on-request</code>. Network is off by default. <code>--yolo</code> turns off both dials; OpenAI marks it not recommended.</p>
+        </div>
+      </div>
+      <p class="muted">Both products have something called “Auto,” and they mean different things. Start where it asks the most, and loosen one notch at a time.</p>
+
+      <ul class="points">
+        <li><strong>What leaves your laptop.</strong><span>Whatever the agent reads goes to the model. A cloud run happens on the company's machines, with whatever you connected to it.</span></li>
+        <li><strong>Write the house rules down.</strong><span>A plain-text SOP the agent reads first. <a href="#house-rules" data-open-target>See the real one below.</a></span></li>
+      </ul>
+
+      <div class="callout scopes">
+        <p class="scopes-label">The scopes story</p>
+        <p class="big-quote">My business inbox was read-only. I added one permission, compose, so the agent can draft replies. It still can't send.</p>
+      </div>
+
+      <details class="notes"><summary>Speaker notes · 2:33 to 2:37</summary>
+        <p>Click Read, then Draft. Pause on the dashed line. Then Send and Delete, and ask the room which rung their project needs.</p>
+        <p>The three “asks” cards: for the demos, Claude Code is set to ask before every edit and command. The Auto point matters for anyone who installs it tonight.</p>
+        <p>Tell the scopes story last. One permission added, and it still can't send. Set up the demos: when the agent asks to write <code>triage.py</code> or run <code>python3</code>, that's this section happening live.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 3 · House rules -->
+  <details class="section" id="house-rules">
+    <summary><h2>House rules</h2><span class="meta">1 min</span></summary>
+    <div class="section-body">
+      <div class="rules-files">
+        <div class="card"><span class="file">CLAUDE.md</span><p>Claude Code reads it at the start of every session: commands, conventions, project rules.</p></div>
+        <div class="card"><span class="file">AGENTS.md</span><p>Codex reads it before it starts work, from your global settings down to the current folder. The closest file wins.</p></div>
+        <div class="card"><span class="file">Cowork</span><p>Keep the same file in the connected folder and ask it to read that first.</p></div>
+      </div>
+      <p>This is the file in today's demo folder. No code in it: an SOP in plain English.</p>
+      <div class="prompt">
+        <div class="prompt-head"><span>03_demos/CLAUDE.md (also saved as AGENTS.md)</span><button type="button" data-copy="house-rules-text" aria-label="Copy the house rules">Copy</button></div>
+<pre id="house-rules-text"># House rules for this folder
+
+Everything in this folder is dummy data made for a workshop. Treat it as if it were real.
+
+- Work only inside this folder. Don't read or write anywhere else.
+- The CSV files you were given are originals. Never edit them; write new files next to them.
+- Before you run any code, explain in plain English what it will do.
+- Put exact checks (duplicates, blanks, formats, dates) in code. Use your own judgment only where I ask
+  for it, and say which is which.
+- When a row doesn't fit the rules, mark it "needs review" with a reason. Don't guess.
+- Never send email, post, or upload anything.</pre>
+      </div>
+
+      <details class="notes"><summary>Speaker notes · 2:37 to 2:38</summary>
+        <p>Read two lines aloud: “needs review” with a reason, and never send. Students can copy it for their own folder in Track B.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 4 · Ways to run an automation -->
+  <details class="section" id="run">
+    <summary><h2>Ways to run an automation</h2><span class="meta">4 min</span></summary>
+    <div class="section-body">
+      <p class="lead-in">Five ways, from “you run it” to “it runs itself.” The further down, the less you watch.</p>
+
+      <div class="run-axis" aria-hidden="true"><span>You run it</span><span>It runs itself</span></div>
+      <ol class="runlad" aria-label="Ways to run an automation, from you run it to it runs itself">
+        <li data-run="a" style="--i:0">
+          <span class="run-letter" aria-hidden="true">A</span>
+          <div>
+            <h3>By hand, in a session</h3>
+            <p>You ask, you watch every step, you say yes or no. The smallest useful unit starts here.</p>
+            <p class="muted">Claude Code's <code>/loop</code> repeats a prompt inside an open session until a goal is met, for up to about three days.</p>
+            <div class="run-tags"><span class="laptop on">Laptop on, you're at it</span><span class="pill">Claude Code · Cowork · Codex</span></div>
+          </div>
+        </li>
+        <li data-run="b" style="--i:1">
+          <span class="run-letter" aria-hidden="true">B</span>
+          <div>
+            <h3>A trigger inside a tool you already use</h3>
+            <p>Google Apps Script. <strong>On form submit</strong> runs when someone responds to a form. <strong>Time-driven</strong> runs anywhere from every minute to once a month; a 9 AM trigger fires between 9 and 10, then keeps that time.</p>
+            <p class="muted">It runs as the person who created the trigger, so any email it sends comes from that account.</p>
+            <div class="run-tags"><span class="laptop off">Laptop can be closed</span><span class="pill">Today's hands-on, Track A</span></div>
+          </div>
+        </li>
+        <li data-run="c" style="--i:2">
+          <span class="run-letter" aria-hidden="true">C</span>
+          <div>
+            <h3>Scheduled on your own computer</h3>
+            <p><strong>cron</strong> runs a command on a timetable. On a Mac, Apple recommends <strong>launchd</strong> instead. The command can be a script, or an agent run without a chat window: <code>claude -p "…"</code> or <code>codex exec "…"</code>.</p>
+            <p class="muted">Only while the computer is on and awake. A launchd job missed during sleep runs when the Mac wakes; a cron job waits for its next time.</p>
+            <div class="run-tags"><span class="laptop on">Laptop must be on</span></div>
+          </div>
+        </li>
+        <li data-run="d" style="--i:3">
+          <span class="run-letter" aria-hidden="true">D</span>
+          <div>
+            <h3>Scheduled tasks built into the apps</h3>
+            <ul class="subopts">
+              <li><strong>Claude Code, desktop scheduled tasks:</strong> on your machine, awake with the Desktop app open. As often as every minute, with your local files and a permission mode for each task.</li>
+              <li><strong>Claude Code routines:</strong> in Anthropic's cloud. On a schedule (at most hourly), from an API call, or on GitHub events. No local files. Set up at claude.ai/code/routines or with <code>/schedule</code>.</li>
+              <li><strong>Claude Cowork scheduled tasks:</strong> <code>/schedule</code>. They run in the cloud and keep going when the Desktop app is closed, but reach your connected folders only while it is open.</li>
+              <li><strong>Codex scheduled tasks</strong> (formerly Automations): under <strong>Scheduled</strong> in the ChatGPT desktop app, which works as an inbox. On the desktop they can use your project folder, with the computer on and the app running. Made on the web, they use uploads and connected tools, not your folders.</li>
+            </ul>
+            <div class="run-tags"><span class="laptop mixed">Laptop: depends where it runs</span></div>
+          </div>
+        </li>
+        <li data-run="e" style="--i:4">
+          <span class="run-letter" aria-hidden="true">E</span>
+          <div>
+            <h3>In the cloud: GitHub Actions</h3>
+            <p>A workflow file in a GitHub repository, run on GitHub's machines on a schedule or on events such as a pull request. Claude Code and Codex each have an official Action: <code>anthropics/claude-code-action</code> and <code>openai/codex-action</code>.</p>
+            <p class="muted">API keys live in repository secrets. Every run uses the key, and API use costs money.</p>
+            <div class="run-tags"><span class="laptop off">Laptop can be closed</span></div>
+          </div>
+        </li>
+      </ol>
+
+      <div class="picker-box">
+        <h3 id="picker-heading">When should it run?</h3>
+        <div class="picker" role="group" aria-labelledby="picker-heading">
+          <button type="button" data-when="form" aria-pressed="false" aria-controls="pick-out">When a form comes in</button>
+          <button type="button" data-when="desk" aria-pressed="false" aria-controls="pick-out">On a schedule, while I'm at my desk</button>
+          <button type="button" data-when="closed" aria-pressed="false" aria-controls="pick-out">On a schedule, even with my laptop closed</button>
+          <button type="button" data-when="ask" aria-pressed="false" aria-controls="pick-out">Only when I ask</button>
+        </div>
+        <div class="pick-out" id="pick-out" aria-live="polite">
+          <p class="muted">Pick one. The matching option lights up above.</p>
+        </div>
+      </div>
+
+      <div class="callout ok run-callout">
+        <p class="big-quote">Start by hand. Schedule it only after you've watched it work a few times.</p>
+        <p>And decide up front what stays manual.</p>
+      </div>
+
+      <h3>Side by side</h3>
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">Ways to run an automation compared</caption>
+          <thead>
+            <tr><th scope="col">Option</th><th scope="col">Where it runs</th><th scope="col">Laptop on?</th><th scope="col">What it can touch</th><th scope="col">Setup</th><th scope="col">A good first use</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">A · By hand, in a session</th><td>Your computer, or the Claude app for Cowork</td><td>Yes, and you're watching</td><td>What you allow, one step at a time</td><td>None</td><td>Build and test the smallest useful unit</td></tr>
+            <tr><th scope="row">B · Apps Script trigger</th><td>Your Google account</td><td>No</td><td>The Google files and services you authorized</td><td>Low</td><td>Each form response becomes a pipeline row with a status and timestamp</td></tr>
+            <tr><th scope="row">C · cron or launchd</th><td>Your computer</td><td>Yes, on and awake</td><td>Your files, and whatever the command is allowed to do</td><td>Medium</td><td>Run demo 1's triage script at 9:00 every Monday</td></tr>
+            <tr><th scope="row">D · Desktop scheduled task (Claude Code, Codex)</th><td>Your computer</td><td>Yes, with the app open</td><td>Local files, within the permissions you set</td><td>Low</td><td>Re-run triage on the newest export each morning</td></tr>
+            <tr><th scope="row">D · Cloud scheduled task (Claude Code routine, Cowork, Codex on the web)</th><td>The company's cloud</td><td>No</td><td>Repositories, uploads and connected tools; Cowork reaches your folders only while its app is open</td><td>Low</td><td>A weekly “no movement in 14 days” alert</td></tr>
+            <tr><th scope="row">E · GitHub Actions</th><td>GitHub's machines</td><td>No</td><td>The repository, plus keys stored as secrets</td><td>Medium to high</td><td>A weekly check on a data file kept in a repository</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cron-wrap">
+        <div class="snippet">
+          <h3>Reading a cron line</h3>
+          <div class="cron" role="img" aria-label="0 9 * * 1: minute 0, hour 9, any day of the month, any month, day of week 1, which is Monday">
+            <div class="cron-f"><code>0</code><span>minute</span></div>
+            <div class="cron-f"><code>9</code><span>hour</span></div>
+            <div class="cron-f"><code>*</code><span>day of month</span></div>
+            <div class="cron-f"><code>*</code><span>month</span></div>
+            <div class="cron-f"><code>1</code><span>day of week</span></div>
+          </div>
+          <p class="cron-eq"><code>0 9 * * 1</code> means 9:00 every Monday.</p>
+          <div class="prompt">
+            <div class="prompt-head"><span>One crontab line</span><button type="button" data-copy="cron-line" aria-label="Copy the crontab line">Copy</button></div>
+<pre id="cron-line"># minute hour day-of-month month day-of-week  command
+0 9 * * 1  /Users/you/intake/run-triage.sh</pre>
+          </div>
+          <details class="reveal"><summary>Before you point cron at an agent</summary>
+            <ul class="subopts">
+              <li><code>claude -p</code> is Claude Code's non-interactive mode, so cron or launchd can run it.</li>
+              <li><code>codex exec</code> starts read-only. Add <code>--sandbox workspace-write</code> to let it edit. It expects a Git repository unless you pass <code>--skip-git-repo-check</code>, and only the final answer goes to standard output, so you can save it to a file.</li>
+              <li>OpenAI lists scheduled jobs as a use for <code>codex exec</code>; its docs don't show a crontab line.</li>
+            </ul>
+          </details>
+        </div>
+        <div class="snippet">
+          <h3>A GitHub Actions schedule</h3>
+          <div class="prompt">
+            <div class="prompt-head"><span>.github/workflows/weekly-check.yml</span><button type="button" data-copy="gha-snippet" aria-label="Copy the workflow file">Copy</button></div>
+<pre id="gha-snippet">name: Weekly check
+on:
+  schedule:
+    # By default, cron time is UTC. 13:00 UTC is 9:00
+    # in Michigan during daylight saving time.
+    - cron: '0 13 * * 1'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 check.py
+        env:
+          API_KEY: ${{ secrets.API_KEY }}  # a repository secret</pre>
+          </div>
+          <details class="reveal"><summary>Good to know</summary>
+            <ul class="subopts">
+              <li>The shortest schedule is every 5 minutes. It runs on the latest commit of the default branch.</li>
+              <li>GitHub now also accepts a <code>timezone:</code> line next to the cron line.</li>
+              <li>Runs can be delayed at busy times, such as the top of the hour. In a public repository, schedules switch off after 60 days with no activity.</li>
+              <li>Add a key under Settings → Secrets and variables → Actions → New repository secret. Values read through <code>secrets</code> are masked in logs.</li>
+              <li><code>openai/codex-action@v1</code> needs <code>openai-api-key</code> from a secret, plus a <code>prompt</code> or <code>prompt-file</code>. OpenAI's example runs on pull requests, not on a schedule.</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+
+      <details class="reveal"><summary>Where to read more</summary>
+        <ul class="doc-links">
+          <li><a href="https://code.claude.com/docs/en/desktop-scheduled-tasks" target="_blank" rel="noopener">Claude Code: desktop scheduled tasks</a> · <a href="https://code.claude.com/docs/en/routines" target="_blank" rel="noopener">routines</a> · <a href="https://code.claude.com/docs/en/github-actions" target="_blank" rel="noopener">GitHub Actions</a></li>
+          <li><a href="https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-claude-cowork" target="_blank" rel="noopener">Claude Cowork: scheduled tasks</a></li>
+          <li><a href="https://learn.chatgpt.com/docs/automations" target="_blank" rel="noopener">Codex: scheduled tasks</a> · <a href="https://learn.chatgpt.com/docs/non-interactive-mode" target="_blank" rel="noopener">codex exec</a> · <a href="https://learn.chatgpt.com/docs/github-action" target="_blank" rel="noopener">GitHub Action</a></li>
+          <li><a href="https://developers.google.com/apps-script/guides/triggers/installable" target="_blank" rel="noopener">Apps Script: installable triggers</a></li>
+          <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule" target="_blank" rel="noopener">GitHub Actions: schedule</a></li>
+        </ul>
+      </details>
+
+      <details class="notes"><summary>Speaker notes · 2:38 to 2:42</summary>
+        <p>The new material. Walk A to E once, top to bottom: the further down, the less you watch. The laptop pills are the thing to point at.</p>
+        <p>Ask one team what their project needs, and click the matching “When should it run?” button. Close on the callout. Don't read the table aloud; it's there for later.</p>
+        <p>If asked about Codex timing: its docs don't say whether a desktop run missed while asleep catches up later.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 5 · Which setup for your project? -->
+  <details class="section" id="chooser-section">
+    <summary><h2>Which setup for your project?</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p>7 of 11 client projects involve sensitive data or an NDA. Answer four questions.</p>
+      <form class="chooser" id="chooser" novalidate>
+        <fieldset class="q">
+          <legend>1. Is the data sensitive or under an NDA?</legend>
+          <div class="yn">
+            <label><input type="radio" name="sensitive" value="yes"> Yes</label>
+            <label><input type="radio" name="sensitive" value="no"> No</label>
+          </div>
+        </fieldset>
+        <fieldset class="q">
+          <legend>2. Does it live in Google Workspace (Forms, Sheets, Drive)?</legend>
+          <div class="yn">
+            <label><input type="radio" name="google" value="yes"> Yes</label>
+            <label><input type="radio" name="google" value="no"> No</label>
+          </div>
+        </fieldset>
+        <fieldset class="q">
+          <legend>3. Does it need to run on files on a computer?</legend>
+          <div class="yn">
+            <label><input type="radio" name="files" value="yes"> Yes</label>
+            <label><input type="radio" name="files" value="no"> No</label>
+          </div>
+        </fieldset>
+        <fieldset class="q">
+          <legend>4. Does it need to run on its own?</legend>
+          <div class="yn">
+            <label><input type="radio" name="own" value="yes"> Yes</label>
+            <label><input type="radio" name="own" value="no"> No</label>
+          </div>
+        </fieldset>
+        <div class="chooser-actions">
+          <button type="button" id="chooser-reset">Start over</button>
+        </div>
+      </form>
+
+      <div class="result" id="chooser-out" aria-live="polite">
+        <p class="label">Recommendation</p>
+        <p>Answer all four questions. <span class="muted">0 of 4 answered.</span></p>
+      </div>
+
+      <details class="reveal" id="chooser-rules"><summary>How the chooser decides</summary>
+        <ol class="rules">
+          <li data-rule="1">Files on a computer? Claude Code or Codex, or Cowork if you'd rather skip the terminal. On its own: a desktop scheduled task, or cron or launchd, with the computer on. If it also lives in Google, ask whether Apps Script is simpler.</li>
+          <li data-rule="2">Otherwise, in Google Workspace? Apps Script, written with an AI assistant and read by you. On its own: an on-form-submit or time-driven trigger.</li>
+          <li data-rule="3">Otherwise, sensitive data? An approved chat assistant, U-M GPT or Maizey, by hand. No schedule until a tool is approved for that data.</li>
+          <li data-rule="4">Otherwise, on its own? A cloud schedule: a Claude Code routine, a Cowork scheduled task, a Codex scheduled task made on the web, or GitHub Actions.</li>
+          <li data-rule="5">Otherwise? Cowork or a chat assistant, by hand, when you need it.</li>
+          <li>Sensitive data adds a caution to every answer: build on dummy data, and real data goes in only if the client and U-M approve the tool.</li>
+        </ol>
+      </details>
+
+      <details class="notes"><summary>Speaker notes · 2:42 to 2:44</summary>
+        <p>Ask one team to call out their four answers and click them in.</p>
+        <p>If someone asks why, open “How the chooser decides.” Each rule asks whether the work really needs that tool. If not, it drops to a simpler one: match tool complexity to task complexity.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 6 · Four questions before you pick -->
+  <details class="section" id="four-questions">
+    <summary><h2>Four questions before you pick</h2><span class="meta">1 min</span></summary>
+    <div class="section-body">
+      <ol class="steps">
+        <li>What do I need to connect?</li>
+        <li>What tools have access to those systems?</li>
+        <li>What is the simplest approach that works?</li>
+        <li>Can an AI tool help me bridge the gap between systems?</li>
+      </ol>
+
+      <h3>Three scenarios</h3>
+      <div class="grid">
+        <article class="card scenario">
+          <h3>Google Workspace only</h3>
+          <p class="env">Everything is in Google Drive.</p>
+          <details class="reveal"><summary>Decision</summary><p>The ecosystem's built-in tools.</p></details>
+        </article>
+        <article class="card scenario">
+          <h3>Several workspaces</h3>
+          <p class="env">Google Drive, a team chat tool, a project management app.</p>
+          <details class="reveal"><summary>Decision</summary><p>Ecosystem tools, plus no-code tools to bridge the gaps.</p></details>
+        </article>
+        <article class="card scenario">
+          <h3>A simple task</h3>
+          <p class="env">Any workspace.</p>
+          <details class="reveal"><summary>Decision</summary><p>Challenge the complex solution. Ask: “Is there a simpler way that I can do this?”</p></details>
+        </article>
+      </div>
+
+      <div class="callout"><strong>Next: three live demos.</strong> Watch for the moments the agent asks.</div>
+
+      <details class="notes"><summary>Speaker notes · 2:44 to 2:45</summary>
+        <p>Read the four questions. Let the room guess each scenario before you open it.</p>
+        <p>End on “Is there a simpler way?” Then switch to the terminal for demo 1: “Let's watch it ask.”</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 7 · APIs in one minute (optional) -->
+  <details class="section" id="apis">
+    <summary><h2>APIs in one minute</h2><span class="meta">Optional</span></summary>
+    <div class="section-body">
+      <h3>What is an API?</h3>
+      <p>Application Programming Interface: a list of things a system can do, and the rules for how to ask it to do them.</p>
+
+      <h3>How do computers talk?</h3>
+      <p>JSON: a list of keys paired with values.</p>
+<pre class="json" aria-label="JSON example with three keys and values"><code>{
+  <span class="k">"name"</span>: <span class="v">"John"</span>,
+  <span class="k">"role"</span>: <span class="v">"Manager"</span>,
+  <span class="k">"department"</span>: <span class="v">"Operations"</span>
+}</code></pre>
+      <details class="reveal"><summary>Which part is the key?</summary>
+        <p>Keys: <strong>name</strong>, <strong>role</strong>, <strong>department</strong>. Values: <strong>John</strong>, <strong>Manager</strong>, <strong>Operations</strong>. Key on the left, value on the right.</p>
+      </details>
+
+      <div class="two">
+        <div class="card">
+          <h3>Authentication</h3>
+          <p>Who you are.</p>
+        </div>
+        <div class="card">
+          <h3>Permissions</h3>
+          <p>What you may do.</p>
+          <ul class="asks-list">
+            <li>Read emails?</li>
+            <li>Send emails?</li>
+            <li>Delete things?</li>
+            <li>Schedule events?</li>
+          </ul>
+        </div>
+      </div>
+      <p class="muted">Sound familiar? That's the email ladder.</p>
+
+      <h3>Where AI comes in</h3>
+      <p>LLMs translate human language into computer language.</p>
+      <div class="translate">
+        <div class="box"><small>Human language</small>“I want to pull data from a spreadsheet and create individual documents for each row.”</div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <span class="ai">AI</span>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="box"><small>Computer language</small>What the system can run.</div>
+      </div>
+
+      <details class="notes"><summary>Speaker notes · only if there's time</summary>
+        <p>Skip unless a team asks what an API is. The permissions list is the ladder again; the LLM line is why today works: you say it in English, the agent writes the code.</p>
+      </details>
+    </div>
+  </details>
+
+  <p class="muted checked-note">Product details checked against Anthropic, OpenAI, GitHub, Apple and Google documentation on September 27, 2026. These tools change often.</p>
+
+  <nav class="pager" aria-label="Sections">
+    <a href="02-idea-your-projects.html">← 2 · Your projects through IDEA</a>
+    <a href="index.html">Outline</a>
+    <a href="04-live-demos.html">4 · Three live demos →</a>
+  </nav>
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if(cls) n.className = cls;
+    if(text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  /* In-page links that point into a closed section open it first. */
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[data-open-target]') : null;
+    if(!a) return;
+    var id = (a.getAttribute('href') || '').slice(1);
+    var target = id && document.getElementById(id);
+    if(target && target.tagName === 'DETAILS'){
+      e.preventDefault();
+      target.open = true;
+      target.scrollIntoView({behavior:'smooth', block:'start'});
+      var s = target.querySelector('summary');
+      if(s) s.focus({preventScroll:true});
+    }
+  });
+
+  /* Email permission ladder */
+  var RUNGS = {
+    read: {
+      n: 1, title: 'Read your inbox',
+      can: 'See what you can see: senders, subjects, message text, attachments.',
+      example: '“List every email from the clinic this week and what each one asks for.”',
+      risk: 'lower', riskLabel: 'Risk: lower',
+      riskText: 'Everything it reads goes to the model.',
+      rule: 'Start here.'
+    },
+    draft: {
+      n: 2, title: 'Create drafts',
+      can: 'Write replies into your Drafts folder. Nothing goes out.',
+      example: '“Draft a reply to each request. I\'ll read and send them myself.”',
+      risk: 'medium', riskLabel: 'Risk: medium',
+      riskText: 'A bad draft costs you time, not the client. You still read every word before it goes.',
+      rule: 'My rule stops here. Drafts only. Sending stays manual.'
+    },
+    send: {
+      n: 3, title: 'Send as you',
+      can: 'Send email from your account, under your name.',
+      example: '“Reply to every applicant and tell them their status.”',
+      risk: 'high', riskLabel: 'Risk: high',
+      riskText: 'Mail goes out before anyone reads it. Once it\'s sent, it\'s sent.',
+      rule: 'Off for me. Sending stays manual.'
+    },
+    'delete': {
+      n: 4, title: 'Delete messages',
+      can: 'Remove messages from your mailbox.',
+      example: '“Clean up my inbox: delete anything older than a year.”',
+      risk: 'highest', riskLabel: 'Risk: highest',
+      riskText: 'It can remove records you or the client still need.',
+      rule: 'Off for me. Deleting stays manual.'
+    }
+  };
+
+  var rungButtons = Array.prototype.slice.call(document.querySelectorAll('button.rung'));
+  var detail = document.getElementById('rung-detail');
+
+  function showRung(key){
+    rungButtons.forEach(function(b){
+      b.setAttribute('aria-pressed', b.getAttribute('data-rung') === key ? 'true' : 'false');
+    });
+    detail.textContent = '';
+    if(!key || !RUNGS[key]){
+      detail.appendChild(el('h3', '', 'Pick a rung'));
+      detail.appendChild(el('p', '', 'Each one shows what that permission lets an agent do with your email, an example request, and the risk.'));
+      return;
+    }
+    var r = RUNGS[key];
+    detail.appendChild(el('p', 'muted', 'Rung ' + r.n + ' of 4'));
+    detail.appendChild(el('h3', '', r.title));
+    detail.appendChild(el('p', '', r.can));
+    detail.appendChild(el('p', 'example', r.example));
+    var riskP = el('p', '');
+    riskP.appendChild(el('span', 'risk risk-' + r.risk, r.riskLabel));
+    riskP.appendChild(document.createTextNode(' ' + r.riskText));
+    detail.appendChild(riskP);
+    detail.appendChild(el('p', 'rule', r.rule));
+  }
+
+  if(detail){
+    rungButtons.forEach(function(b){
+      b.addEventListener('click', function(){
+        var on = b.getAttribute('aria-pressed') === 'true';
+        showRung(on ? null : b.getAttribute('data-rung'));
+      });
+    });
+  }
+
+  /* When should it run? */
+  var WHEN = {
+    form: {
+      runs: ['b'],
+      rec: 'B · An Apps Script trigger: on form submit',
+      why: 'It fires when someone responds, runs from your Google account, and your laptop can be closed.'
+    },
+    desk: {
+      runs: ['c', 'd'],
+      rec: 'C or D · cron or launchd, or a desktop scheduled task',
+      why: 'It can reach the files on your computer, so the computer has to be on, and for a desktop scheduled task the app open.'
+    },
+    closed: {
+      runs: ['d', 'e'],
+      rec: 'D or E, in the cloud · a Claude Code routine, a Cowork scheduled task, a Codex scheduled task made on the web, or GitHub Actions',
+      why: 'It runs on the company\'s machines, so it can\'t see your local folders. If the data lives in Google, an Apps Script time-driven trigger is simpler.'
+    },
+    ask: {
+      runs: ['a'],
+      rec: 'A · By hand, in a session',
+      why: 'You watch every step. Everything starts here, and plenty of work should stay here.'
+    }
+  };
+  var whenButtons = Array.prototype.slice.call(document.querySelectorAll('button[data-when]'));
+  var pickOut = document.getElementById('pick-out');
+  var runSteps = Array.prototype.slice.call(document.querySelectorAll('ol.runlad > li[data-run]'));
+
+  function showWhen(key){
+    whenButtons.forEach(function(b){
+      b.setAttribute('aria-pressed', b.getAttribute('data-when') === key ? 'true' : 'false');
+    });
+    var w = key ? WHEN[key] : null;
+    runSteps.forEach(function(li){
+      li.classList.toggle('is-match', !!w && w.runs.indexOf(li.getAttribute('data-run')) !== -1);
+    });
+    pickOut.textContent = '';
+    if(!w){
+      pickOut.appendChild(el('p', 'muted', 'Pick one. The matching option lights up above.'));
+      return;
+    }
+    pickOut.appendChild(el('p', 'rec', w.rec));
+    pickOut.appendChild(el('p', '', 'Why: ' + w.why));
+  }
+
+  if(pickOut){
+    whenButtons.forEach(function(b){
+      b.addEventListener('click', function(){
+        var on = b.getAttribute('aria-pressed') === 'true';
+        showWhen(on ? null : b.getAttribute('data-when'));
+      });
+    });
+  }
+
+  /* Which setup for your project? */
+  var form = document.getElementById('chooser');
+  var out = document.getElementById('chooser-out');
+  var ruleItems = Array.prototype.slice.call(document.querySelectorAll('#chooser-rules li[data-rule]'));
+  var ALWAYS = 'Client data stays in tools the client and U-M approve. Today, everything is dummy data.';
+
+  function val(name){
+    var c = form.querySelector('input[name="' + name + '"]:checked');
+    return c ? c.value : null;
+  }
+
+  function markRule(n){
+    ruleItems.forEach(function(li){
+      li.classList.toggle('fired', n !== null && String(n) === li.getAttribute('data-rule'));
+    });
+  }
+
+  function recommend(s, g, f, o){
+    var r = {also: '', caution: ''};
+    if(f === 'yes'){
+      r.rule = 1;
+      r.agent = 'Claude Code or Codex. Cowork if you\'d rather skip the terminal.';
+      r.run = o === 'yes'
+        ? 'A desktop scheduled task, or cron or launchd running claude -p or codex exec. The computer has to be on.'
+        : 'By hand, in a session. Watch every step.';
+      r.why = 'The work is files on a computer, and these agents work in a folder.';
+      if(g === 'yes') r.also = 'It also lives in Google. Ask first: could Apps Script do it where the data already is?';
+    } else if(g === 'yes'){
+      r.rule = 2;
+      r.agent = 'Apps Script, written with an AI assistant and read by you.';
+      r.run = o === 'yes'
+        ? 'An Apps Script trigger: on form submit, or time-driven. Your laptop can be closed.'
+        : 'Run the function by hand from the Apps Script editor.';
+      r.why = 'It lives where the work already is. No install.';
+    } else if(s === 'yes'){
+      r.rule = 3;
+      r.agent = 'An approved chat assistant: U-M GPT, or Maizey.';
+      r.run = o === 'yes'
+        ? 'By hand for now. Schedule nothing until the client and U-M approve a tool for this data.'
+        : 'By hand, when you need it.';
+      r.why = 'Client data goes only into tools the client and U-M approve.';
+    } else if(o === 'yes'){
+      r.rule = 4;
+      r.agent = 'Claude Code, Cowork or Codex.';
+      r.run = 'In the cloud: a Claude Code routine, a Cowork scheduled task, a Codex scheduled task made on the web, or GitHub Actions if it lives in a repository.';
+      r.why = 'There is nothing on your computer to reach, so it can run on the company\'s machines with your laptop closed.';
+    } else {
+      r.rule = 5;
+      r.agent = 'Cowork, or a chat assistant.';
+      r.run = 'By hand, when you need it.';
+      r.why = 'Start with the simplest approach that works.';
+    }
+    if(s === 'yes'){
+      r.caution = 'Sensitive data: build and test on dummy data. Real data goes in only if the client and U-M approve the tool.';
+    }
+    return r;
+  }
+
+  function row(dl, label, text, cls){
+    dl.appendChild(el('dt', '', label));
+    dl.appendChild(el('dd', cls || '', text));
+  }
+
+  function updateChooser(){
+    var s = val('sensitive'), g = val('google'), f = val('files'), o = val('own');
+    var answered = [s, g, f, o].filter(Boolean).length;
+    out.textContent = '';
+    out.appendChild(el('p', 'label', 'Recommendation'));
+    if(answered < 4){
+      var p = el('p', '', 'Answer all four questions. ');
+      p.appendChild(el('span', 'muted', answered + ' of 4 answered.'));
+      out.appendChild(p);
+      markRule(null);
+      return;
+    }
+    var r = recommend(s, g, f, o);
+    var dl = el('dl', '');
+    row(dl, 'Agent', r.agent, 'rec');
+    row(dl, 'How it runs', r.run);
+    row(dl, 'Why', r.why);
+    out.appendChild(dl);
+    if(r.also) out.appendChild(el('p', '', r.also));
+    if(r.caution) out.appendChild(el('p', 'caution', r.caution));
+    out.appendChild(el('p', 'always', ALWAYS));
+    out.appendChild(el('p', 'muted', 'Rule ' + r.rule + ' in “How the chooser decides.”'));
+    markRule(r.rule);
+  }
+
+  if(form && out){
+    form.addEventListener('change', updateChooser);
+    form.addEventListener('submit', function(e){ e.preventDefault(); });
+    var reset = document.getElementById('chooser-reset');
+    if(reset) reset.addEventListener('click', function(){ form.reset(); updateChooser(); });
+    /* Browsers can restore checked radios on reload without firing change. */
+    updateChooser();
+    window.addEventListener('pageshow', updateChooser);
+  }
+})();
+</script>
+</body>
+</html>

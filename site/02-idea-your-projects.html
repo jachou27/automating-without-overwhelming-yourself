@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projects Through IDEA</title>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="assets/shared.js"></script>
+<style>
+/* page-only styles; var(--tokens) only. Sizes in em so "Bigger text" scales them. */
+details.section{scroll-margin-top:96px}
+.section-body>h3:first-child{margin-top:0}
+.shape-1,.shape-2,.shape-3{--tint:var(--surface-2)}
+@supports (background:color-mix(in srgb,red,blue)){
+  .shape-1,.shape-2,.shape-3{--tint:color-mix(in srgb,var(--shape) 12%,var(--surface))}
+}
+
+/* key numbers */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:4px 0 20px}
+.stat{border-top:5px solid var(--maize);padding:18px 18px 16px}
+.stat b{display:block;font-size:clamp(2.2em,4.4vw,3em);line-height:1;font-weight:800;letter-spacing:-.03em;color:var(--heading);margin-bottom:10px}
+.stat span{display:block;font-size:.94em;line-height:1.45}
+
+/* anatomy */
+.anatomy{margin:0 0 30px}
+.anatomy>p{margin:0 0 10px;font-size:1.05em}
+ol.flow{list-style:none;counter-reset:f;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+ol.flow>li{counter-increment:f;margin:0;display:inline-flex;align-items:center;gap:9px;padding:6px 14px 6px 6px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:.92em;font-weight:600;line-height:1.3;max-width:100%}
+ol.flow>li::before{content:counter(f);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--heading);color:var(--surface);font-size:.8em;font-weight:800}
+
+/* three-shape overview */
+.shape-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:6px 0 8px}
+.shape-legend a.card{border-top:6px solid var(--shape);background:var(--tint);padding:16px 18px}
+.shape-legend a.card:hover{border-color:var(--shape)}
+.legend-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.legend-name{font-size:1.2em;font-weight:800;line-height:1.2;color:var(--heading)}
+.legend-tag{margin:0;font-size:.9em;line-height:1.4}
+.legend-meta{display:block;margin-top:8px;font-size:.8em;font-weight:700;color:var(--muted)}
+.shape-badge{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--shape,var(--accent));color:var(--surface);font-size:1.3em;font-weight:800}
+.shape-group{margin:34px 0 0;scroll-margin-top:96px}
+.shape-head{display:flex;align-items:flex-start;gap:14px;padding-bottom:12px;margin-bottom:14px;border-bottom:3px solid var(--shape)}
+.shape-head .shape-badge{width:52px;height:52px;font-size:1.5em}
+.shape-kicker{margin:0;font-size:.74em;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--shape)}
+.shape-head h3{margin:2px 0 2px;font-size:clamp(1.25em,2.4vw,1.5em)}
+.shape-head .tag{margin:0;font-size:.95em;color:var(--muted)}
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.proj-card{display:flex;flex-direction:column;gap:8px;border-left-width:6px;padding:16px 18px}
+.proj-card h4{margin:0;font-size:1.08em;line-height:1.25;color:var(--heading)}
+.proj-card .pill{align-self:flex-start;font-size:.72em}
+.proj-card p{margin:0;font-size:.88em;line-height:1.45}
+.proj-card .have{color:var(--muted)}
+.k{display:block;font-size:.78em;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--shape,var(--muted));margin-bottom:2px}
+.unit{background:var(--tint,var(--surface-2));border-radius:10px;padding:10px 12px;font-weight:600}
+.proj-card .walk-btn{margin-top:auto;align-self:flex-start}
+.proj-card .walk-btn:hover{border-color:var(--shape)}
+.after-shapes{margin-top:26px}
+
+/* IDEA recap */
+.idea-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0}
+.idea-grid .card{border-top:5px solid var(--accent)}
+.idea-grid .card.is-focus{border-top-color:var(--maize);background:var(--maize-bg)}
+.idea-grid .card h3{display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:1.2em}
+.idea-grid ul{margin:0;padding-left:20px}
+.idea-grid li{margin:5px 0;font-size:.94em}
+.letter{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:1.2em;line-height:1}
+.example{margin-top:22px}
+.example h3{margin:0 0 10px}
+ol.flow.task>li{background:var(--surface-2)}
+dl.idea-dl{margin:8px 0 4px;display:grid;grid-template-columns:auto 1fr;gap:12px 18px}
+dl.idea-dl dt{font-weight:800;color:var(--heading)}
+dl.idea-dl dd{margin:0}
+
+/* walkthrough */
+.idea-tool{background:var(--surface);border:1px solid var(--line);border-top:7px solid var(--shape,var(--accent));border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px 22px}
+.tool-top{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:16px 22px;align-items:stretch}
+.picker label{display:block;margin-bottom:6px;font-size:.8em;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.picker select{font-size:1.05em;font-weight:650;padding:12px 14px;min-height:52px}
+.proj-head{border-radius:12px;background:var(--tint,var(--surface-2));padding:14px 18px}
+.proj-head .name{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 6px;font-size:1.3em;font-weight:800;line-height:1.2;color:var(--heading)}
+.proj-head p{margin:4px 0;font-size:.92em}
+.proj-head code{overflow-wrap:anywhere}
+.shape-pill{display:inline-block;font-size:.62em;font-weight:750;padding:4px 12px;border-radius:999px;background:var(--shape,var(--accent));color:var(--surface);letter-spacing:.01em}
+.stepper{list-style:none;margin:20px 0 10px;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.stepper li{margin:0;max-width:none}
+.stepper button{width:100%;min-height:62px;justify-content:flex-start;text-align:left;gap:10px;font-size:.95em;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
+.stepper button:hover{border-color:var(--shape,var(--accent))}
+.stepper .sl{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:2px solid var(--shape,var(--accent));color:var(--shape,var(--accent));font-weight:800;font-size:1.05em}
+.stepper button[aria-current="step"]{background:var(--shape,var(--accent));border-color:var(--shape,var(--accent));color:var(--surface);font-weight:800;box-shadow:var(--shadow)}
+.stepper button[aria-current="step"] .sl{background:var(--surface);color:var(--shape,var(--accent));border-color:var(--surface)}
+.stepper .done{margin-left:auto;font-weight:800;color:var(--ok)}
+.stepper button[aria-current="step"] .done{color:var(--surface)}
+.progress{display:flex;align-items:center;gap:14px;margin:4px 0 18px;scroll-margin-top:96px}
+.progress p{margin:0;font-weight:750;white-space:nowrap}
+.bar{flex:1;height:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.bar span{display:block;height:100%;width:25%;background:var(--shape,var(--accent));transition:width .25s}
+.panel-title{display:flex;align-items:center;gap:14px;margin:0 0 14px;font-size:clamp(1.45em,3vw,1.9em);line-height:1.15}
+.panel-title .letter{width:56px;height:56px;font-size:.9em;background:var(--shape,var(--accent));color:var(--surface)}
+.panel-title:focus{outline:none}
+.panel-title:focus-visible{outline:3px solid var(--focus);outline-offset:4px;border-radius:8px}
+.panel-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px 28px;align-items:start}
+.questions{list-style:none;margin:0;padding:0}
+.questions li{position:relative;margin:0 0 12px;padding-left:22px;font-size:1.12em;line-height:1.4;max-width:none}
+.questions li::before{content:"";position:absolute;left:0;top:.5em;width:9px;height:9px;border-radius:50%;background:var(--shape,var(--accent))}
+.panel label{display:block;margin:0 0 6px;font-size:.9em}
+.panel textarea{font-size:1.02em;min-height:220px;line-height:1.5}
+.panel details.reveal p{font-size:1em;margin:8px 0 4px}
+.step-nav{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.step-nav .spacer{flex:1}
+.clear-btn{color:var(--danger);border-color:var(--danger)}
+.clear-btn:hover,.clear-btn.arm{background:var(--danger-bg);border-color:var(--danger)}
+.idea-card{border:3px solid var(--shape,var(--accent));border-radius:var(--radius);padding:20px 22px;background:var(--surface)}
+.idea-card .card-kicker{font-size:.72em;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--maize-ink);margin:0}
+.idea-card .card-title{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 4px;font-size:clamp(1.4em,2.8vw,1.8em)}
+.idea-card .card-title:focus{outline:none}
+.idea-card .card-title:focus-visible{outline:3px solid var(--focus);outline-offset:4px;border-radius:8px}
+.idea-card dl{margin:16px 0 0;display:grid;grid-template-columns:auto 1fr;gap:14px 18px;align-items:start}
+.idea-card dt{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--heading)}
+.idea-card dt .letter{width:34px;height:34px;font-size:.9em;background:var(--shape,var(--accent));color:var(--surface)}
+.idea-card dd{margin:0;padding-top:4px;white-space:pre-wrap;font-size:1.02em}
+.idea-card dd.empty{color:var(--muted);font-style:italic}
+.card-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+@media (max-width:860px){
+  .tool-top,.panel-grid{grid-template-columns:1fr}
+  .stepper{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stepper li:last-child{grid-column:1 / -1}
+}
+@media (max-width:640px){
+  .idea-tool{padding:16px 14px}
+  dl.idea-dl,.idea-card dl{grid-template-columns:1fr;gap:4px}
+  dl.idea-dl dd,.idea-card dd{margin-bottom:10px}
+  .progress{flex-wrap:wrap}
+  .step-nav .spacer{display:none}
+}
+@media (max-width:480px){
+  .stepper button{position:relative;flex-direction:column;align-items:flex-start;gap:6px}
+  .stepper .done{position:absolute;top:10px;right:12px;margin:0}
+  .stepper li:last-child button{flex-direction:row;align-items:center}
+}
+@media print{
+  .print-idea body *{visibility:hidden}
+  .print-idea #idea-card,.print-idea #idea-card *{visibility:visible}
+  .print-idea #idea-card{position:absolute;left:0;top:0;width:100%;border-color:var(--ink)}
+}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="page">
+  <a class="brand" href="index.html">Automating Without Overwhelming Yourself</a>
+  <span class="crumb">2 of 6 · 2:00–2:30</span>
+  <nav class="section-nav" aria-label="Workshop sections">
+    <a href="index.html">Outline</a><a href="01-should-you-automate.html">1</a><a href="02-idea-your-projects.html" aria-current="page">2</a><a href="03-tools-of-the-trade.html">3</a><a href="04-live-demos.html">4</a><a href="05-hands-on.html">5</a><a href="06-share-and-close.html">6</a>
+  </nav>
+  <div class="tools">
+    <button type="button" data-expand-all>Expand all</button>
+    <button type="button" data-collapse-all>Collapse all</button>
+    <button type="button" data-present-toggle aria-label="Bigger text for the projector">Bigger text</button>
+    <button type="button" data-theme-toggle aria-label="Switch light or dark">Theme</button>
+  </div>
+</div></header>
+<main class="page">
+  <section class="hero">
+    <div class="kicker">2 · 2:00–2:30 · interactive</div>
+    <h1>Your projects through IDEA</h1>
+    <p class="lede">Your eleven client projects come in three shapes. Each team walks its own project through IDEA and leaves with its smallest useful unit.</p>
+  </section>
+
+  <!-- 1 -->
+  <details class="section" id="shapes" open>
+    <summary><h2>Your projects come in three shapes</h2><span class="meta">4 min</span></summary>
+    <div class="section-body">
+      <h3>What the 11 proposals have in common</h3>
+      <div class="stats">
+        <div class="card stat"><b>9 of 11</b><span>say the reliable outcome is workflow analysis, design concepts, working prompts and a roadmap. A prototype only if skills allow.</span></div>
+        <div class="card stat"><b>8 of 11</b><span>are open to simpler or non-AI approaches.</span></div>
+        <div class="card stat"><b>7 of 11</b><span>raise cost and upkeep.</span></div>
+        <div class="card stat"><b>7 of 11</b><span>involve sensitive data or an NDA.</span></div>
+      </div>
+
+      <div class="callout anatomy">
+        <p><strong>Every project has the same anatomy:</strong></p>
+        <ol class="flow">
+          <li>Something arrives</li>
+          <li>Structured bits get pulled out</li>
+          <li>A rule or a person decides</li>
+          <li>A record gets written</li>
+          <li>Someone needs to notice when it silently stops working</li>
+        </ol>
+      </div>
+
+      <h3>Find your project</h3>
+      <div class="shape-legend" id="shape-legend"></div>
+      <div id="shape-groups"></div>
+      <noscript><p>The project cards need JavaScript. Full details are on the <a href="projects.html">projects page</a>.</p></noscript>
+
+      <div class="after-shapes">
+        <p><a href="projects.html" target="_blank" rel="noopener">Full detail for every project (opens in a new tab)</a></p>
+        <p class="muted">The smallest useful unit is a starting point to argue with, not an assignment.</p>
+      </div>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p><strong>Pacing for the 30 minutes.</strong></p>
+        <ul>
+          <li>2:00–2:04 · This section. Read the four numbers. Point at each shape. Every team finds its card.</li>
+          <li>2:04–2:06 · IDEA recap with the sign-in sheet example. They saw it at the end of page 1; do not reteach.</li>
+          <li>2:06–2:07 · "How we'll run it" (next section). Then open the walkthrough.</li>
+          <li>2:07–2:12 · Identify. 2:12–2:17 · Document. 2:17–2:23 · Experiment. 2:23–2:28 · Adjust.</li>
+          <li>2:28–2:30 · Lightning round: each team says its smallest useful unit in one sentence.</li>
+        </ul>
+        <p>The pitch: nine of eleven clients want analysis, working prompts and a roadmap, and eight are open to non-AI answers. So the first skill is deciding what to automate, not building. Some of the smallest units need no AI at all, for example Zell and Marsal.</p>
+        <p>Each shape gets a live demo at 2:45: Demo 1 is intake, Demo 2 is the pile, Demo 3 is the sheets.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 2 -->
+  <details class="section" id="idea">
+    <summary><h2>The IDEA framework</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p class="big-quote">IDEA is not a building plan. It is a thinking tool.</p>
+      <div class="idea-grid">
+        <div class="card"><h3><span class="letter" aria-hidden="true">I</span>Identify</h3>
+          <ul><li>What are you trying to accomplish?</li><li>The goal is not automation. The goal is the desired outcome.</li><li>What does "done" look like?</li></ul></div>
+        <div class="card"><h3><span class="letter" aria-hidden="true">D</span>Document</h3>
+          <ul><li>Break the task into building blocks: data source, transformation, output.</li><li>What's fixed? What varies?</li></ul></div>
+        <div class="card is-focus"><h3><span class="letter" aria-hidden="true">E</span>Experiment</h3>
+          <ul><li>Choose one component to test.</li><li>Start with the smallest workable version.</li><li>See how it performs in your real context.</li></ul></div>
+        <div class="card"><h3><span class="letter" aria-hidden="true">A</span>Adjust</h3>
+          <ul><li>What could break if something changes?</li><li>Who else is affected?</li><li>What ongoing maintenance is required?</li></ul></div>
+      </div>
+
+      <div class="card example">
+        <h3>Example: the Monday attendance email</h3>
+        <ol class="flow task">
+          <li>Pull data from a sign-in sheet</li>
+          <li>Copy into an email and format it</li>
+          <li>Send it every Monday</li>
+          <li>About 20 minutes a week</li>
+        </ol>
+        <details class="reveal"><summary>Run the example through IDEA</summary>
+          <dl class="idea-dl">
+            <dt>Identify</dt><dd>The goal is not "automate the attendance email." That is a solution. The goal: the team gets an accurate, timely summary every week without me assembling it. Trigger: the start of a new week. Done means a formatted email in inboxes by Monday at 10 AM.</dd>
+            <dt>Document</dt><dd>Source: the sign-in sheet. Transformation: pull the numbers, maybe calculate percentages. Output: the email. Fixed: format, recipients, structure. Varies: the numbers, the date, who was absent.</dd>
+            <dt>Experiment</dt><dd>Auto-fill a template with this week's numbers and still send it by hand. Test one piece and see if it works.</dd>
+            <dt>Adjust</dt><dd>What if someone changes the sign-in sheet? What if a new person joins the team? How would I know something went wrong?</dd>
+          </dl>
+        </details>
+      </div>
+      <p class="callout">Some tasks are fine the way they are. That is a valid outcome.</p>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>Page 1 already covered IDEA, so spend one minute here. Use the example as the model answer for the walkthrough.</p>
+        <p>Land on Experiment: "start with the smallest workable version." That is today's thesis. The fixed parts are what you template; the parts that vary are what the system has to handle.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 3 -->
+  <details class="section" id="run">
+    <summary><h2>How we'll run it</h2><span class="meta">1 min</span></summary>
+    <div class="section-body">
+      <ol class="steps">
+        <li>Sit with your client team.</li>
+        <li>Pick your project. No project yet? Use your own workflow.</li>
+        <li>About 5 minutes per step: Identify, Document, Experiment, Adjust.</li>
+        <li>Answer in the page or on paper.</li>
+        <li>I call on two or three teams per step.</li>
+      </ol>
+      <p class="big-quote">Goal: every team leaves with its smallest useful unit named in one sentence.</p>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>Say this before opening the walkthrough. Keep a visible clock. Call on different teams each step so all three shapes get heard.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 4 -->
+  <details class="section" id="walk">
+    <summary><h2>Walk your project through IDEA</h2><span class="meta">23 min</span></summary>
+    <div class="section-body">
+      <div class="idea-tool" id="idea-tool">
+        <div class="tool-top">
+          <div class="picker">
+            <label for="idea-project">Your project</label>
+            <select id="idea-project"></select>
+          </div>
+          <div class="proj-head" id="idea-head"></div>
+        </div>
+
+        <ol class="stepper" id="idea-stepper" aria-label="IDEA steps"></ol>
+        <div class="progress" id="idea-progress">
+          <p id="idea-progress-text" aria-live="polite">Step 1 of 4 · Identify</p>
+          <div class="bar" aria-hidden="true"><span id="idea-bar"></span></div>
+        </div>
+
+        <div class="panel" id="idea-panel"></div>
+
+        <div class="step-nav">
+          <button type="button" class="btn-lg" id="idea-back">← Back</button>
+          <button type="button" class="btn-lg btn-primary" id="idea-next">Next →</button>
+          <span class="spacer"></span>
+          <button type="button" class="clear-btn" id="idea-clear">Clear this project's answers</button>
+        </div>
+        <noscript><p>The walkthrough needs JavaScript. Use the four IDEA questions above on paper.</p></noscript>
+      </div>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>Pick "Your own workflow" to show how it works: the example answers are the sign-in sheet. Then switch to a real project, for example Zell.</p>
+        <p>Open an example only after teams have written something. Answers save in this browser, separately for each project.</p>
+        <p>Identify: listen for "automate X." Push back: that is a solution, not a goal. What does the client want?</p>
+        <p>Experiment is the one that matters. Every team says its unit in one sentence. Ask: does this one need AI at all?</p>
+        <p>Adjust: if time is short, keep it brief. It comes back at the end of the hands-on, when their build hits the planted problems.</p>
+      </details>
+    </div>
+  </details>
+
+  <nav class="pager" aria-label="Sections">
+    <a href="01-should-you-automate.html">← 1 · Should you automate it?</a>
+    <a href="index.html">Outline</a>
+    <a href="03-tools-of-the-trade.html">3 · Tools of the trade →</a>
+  </nav>
+</main>
+
+<script>
+/* All project data lives here. Edit this object to change cards, examples or questions.
+   Checked against 02_projects/ai-clinic-projects.html and the per-project cheat sheet. */
+const IDEA_DATA = {
+  shapes: {
+    1: { name: "Intake → triage", tag: "Something arrives; a rule or a person decides; a record gets written.", demo: "Demo 1" },
+    2: { name: "Pile → catalog", tag: "Find it later: capture, name, retrieve.", demo: "Demo 2" },
+    3: { name: "Many sheets → one table", tag: "Two sources, one truth: join on a shared key, then act on the combined table.", demo: "Demo 3" }
+  },
+  steps: [
+    { key: "identify", name: "Identify", letter: "I",
+      questions: ["What are you trying to accomplish?", "The goal is not automation. It is the outcome your client wants.", "What does \"done\" look like?", "What triggers the task?"],
+      placeholder: "Our client wants... Done looks like..." },
+    { key: "document", name: "Document", letter: "D",
+      questions: ["Data source: where does it come from?", "Transformation: what happens to it?", "Output: a doc, an email, a status column, a row in another sheet?", "What is fixed every time? What varies?"],
+      placeholder: "Source: ... Transformation: ... Output: ... Fixed: ... Varies: ..." },
+    { key: "experiment", name: "Experiment", letter: "E",
+      questions: ["Choose one component to test.", "What is the smallest workable version?", "How will you see it work in the real context? Today, test on fake data.", "Name your smallest useful unit in one sentence."],
+      placeholder: "Our smallest useful unit: ..." },
+    { key: "adjust", name: "Adjust", letter: "A",
+      questions: ["What could break if something changes?", "Who else is affected?", "What ongoing maintenance does it need?", "What stays manual? Where may the data go?"],
+      placeholder: "Could break: ... Stays manual: ... Data rule: ... Upkeep: ..." }
+  ],
+  projects: [
+    { id: "zell", shape: 1, name: "Zell Entrepreneurship Clinic", flag: "UMSI NDA",
+      have: "75–100 applications a year through one Google Form, copied by hand into a pipeline sheet.",
+      unit: "A form submission lands as a row with status and timestamp. No AI.",
+      sandbox: "form_zell_application_responses.csv",
+      ex: {
+        identify: "No applicant gets lost, and the annual stats come from the same table. Trigger: a new form submission. Done: every submission appears in the ZEC Pipeline sheet with a status, and nobody copies it by hand.",
+        document: "Joint Google Form → copied by hand into the ZEC Pipeline sheet with a status → one pipeline row per applicant. Fixed: the form questions, the status tabs, the written SOP. Varies: 75–100 applicants a year and what each one needs.",
+        experiment: "A form submission lands as a row with a status and a timestamp. Apps Script, no AI: the copy-paste step is the whole cost.",
+        adjust: "Accept, waitlist, deny and routing between the two clinics stay manual. Applicants are told not to include confidential information, and U-M tools are preferred. Upkeep: who notices a row with no movement in 14 days, and who fixes the script when the form changes?"
+      } },
+    { id: "mta", shape: 1, name: "Innovation Partnerships MTA", flag: "UMSI NDA + IP",
+      have: "A high volume of material transfer requests. An eRPM screening questionnaire. Review and document prep are manual today.",
+      unit: "Eligibility rules mark each request eligible, not eligible, or needs review.",
+      sandbox: "form_mta_screening_responses.csv",
+      ex: {
+        identify: "Low-risk material transfers get identified and go out on a non-negotiated agreement, so manual review goes to the requests that need it. Trigger: a new request and its screening questionnaire. Done: every request is marked eligible, not eligible, or needs review.",
+        document: "eRPM screening questionnaire → eligibility criteria applied to the answers → a status on each request, later a filled standard template. Fixed: the questions and the criteria. Varies: free-text answers, some of them ambiguous.",
+        experiment: "Write eligibility as explicit rules from the questionnaire, so each request comes out eligible, not eligible, or needs review. Rules, not vibes.",
+        adjust: "Anything the gate does not clear stays manual: legal, regulatory, IP. The forms are not confidential; Maizey is preferred over public tools. Upkeep: who updates the rules when the questionnaire changes?"
+      } },
+    { id: "dining", shape: 1, name: "Michigan Dining sustainability", flag: "",
+      have: "Five Google Forms, one per sustainability pillar.",
+      unit: "One form response becomes a draft next-steps memo for review.",
+      sandbox: "form_dining_sustainability_responses.csv",
+      ex: {
+        identify: "Each respondent learns how their current work compares with campus goals, what to do next, and where to find resources. Trigger: a submitted form response. Done: a reviewed next-steps report, emailed as a PDF.",
+        document: "Five Google Forms, one per pillar → each response checked against campus goals and best practices → a next-steps report. Fixed: the pillars, the questions, the campus goals. Varies: every respondent's answers.",
+        experiment: "One form response becomes a draft next-steps memo, using campus goals and best practices as the rubric, for staff to review. The whole pipeline fits in Apps Script plus one LLM call.",
+        adjust: "Review stays manual: every memo is checked before it reaches a respondent, at least until trust is earned. No data sensitivities. Upkeep: the client asked about the energy and cost of the tool, so who tracks that, and who keeps the rubric current?"
+      } },
+    { id: "ovpr", shape: 1, name: "OVPR limited submissions", flag: "UMSI NDA",
+      have: "About 250 applications a year in InfoReady. Three reviewers, 30 minutes each.",
+      unit: "One funder's criteria become a rubric staff approve.",
+      sandbox: "requests_inbox.csv, or build your own InfoReady-style form",
+      ex: {
+        identify: "Explainable help for the reviewers and more consistent feedback, while every decision stays manual. Done: a rubric-aligned first pass, with quoted evidence, that reviewers trust.",
+        document: "InfoReady applications and each funder's criteria → a rubric, then a first-pass review with quoted evidence → draft feedback and a shortlist for experts. Fixed: the approved rubric for each award. Varies: every funder's criteria, and about 250 applications a year.",
+        experiment: "Turn one funder's criteria into an award-specific rubric that staff approve. Test it on synthetic applications, as the client asked.",
+        adjust: "Every decision stays manual, and experts review the shortlist. The review is confidential: institutional tools only, and explainability is required. Upkeep: a new rubric per funder, and a check that reviewers still trust the first pass."
+      } },
+    { id: "foia", shape: 1, name: "Oakland County records / FOIA", flag: "Client NDA",
+      have: "A policy project first. AI-generated FOIA requests arriving at scale.",
+      unit: "One FOIA request becomes a row: requester, scope, date range.",
+      sandbox: "requests_inbox.csv",
+      ex: {
+        identify: "Retention and governance rules for AI-generated records, and a way to keep up with FOIA requests arriving at scale. Done: policy recommendations first, a build only if the team wants one. For a build, the trigger is an incoming FOIA request.",
+        document: "Incoming FOIA requests → pull out requester, scope, systems implicated and date range → one row per request, later routed to a department. Fixed: the fields every request needs. Varies: the wording, and near-identical AI-generated requests.",
+        experiment: "If the team wants a build: one FOIA request becomes a row with requester, scope, systems implicated and date range.",
+        adjust: "Every response and the policy recommendations stay manual. Private materials stay inside County-provided tools. Upkeep: who catches near-duplicate requests, and who tags new records with a retention schedule?"
+      } },
+    { id: "cai", shape: 1, name: "CAI AI Enablement", flag: "Client NDA",
+      have: "Designing intake, prioritization, delivery, evaluation and handoff for an AI enablement function.",
+      unit: "The IDEA and ROI worksheet used as the intake form.",
+      sandbox: "requests_inbox.csv",
+      ex: {
+        identify: "A repeatable way to take in, prioritize, deliver, evaluate and hand off AI use cases. Done: every use case enters through one intake and has a way to tell whether it broke or paid off.",
+        document: "Use cases such as hiring workflows, MOU and contract review, course creation, studio health reporting → intake, prioritization, delivery, evaluation → a handoff. Fixed: the stages. Varies: every use case.",
+        experiment: "Use the IDEA and ROI worksheet as the intake form, with \"how would we know it broke or paid off\" as the evaluation criterion. Then take one use case end to end: studio health reporting is the safest.",
+        adjust: "Personnel and legal decisions stay manual. Approved tools only, with a privacy review before sensitive use cases. Upkeep: who owns each use case after the handoff?"
+      } },
+    { id: "ginsberg", shape: 2, name: "Ginsberg Center archive", flag: "",
+      have: "1,000+ SERVE files from 2000–2010, many duplicated or versioned.",
+      unit: "A file inventory with exact duplicates flagged.",
+      sandbox: "shared_drive_dump.csv",
+      ex: {
+        identify: "People can find what is in the SERVE archive. Done: an annotated catalog with duplicates flagged, a tested sort-and-summarize approach, and a roadmap.",
+        document: "1,000+ files on the M: drive → name, date, size and hash for each, later a summary → a catalog sheet. Fixed: the file set from 2000–2010. Varies: versions, duplicates, and which files hold student IDs.",
+        experiment: "An inventory script writes each file's name, date, size and hash to a sheet, with exact duplicates flagged by hash.",
+        adjust: "Which version is best, what to delete, and files with personal information stay manual. Files with student IDs are deleted, not indexed. Upkeep: who curates the set before Maizey searches it?"
+      } },
+    { id: "fja", shape: 2, name: "FJA staff AI portal", flag: "",
+      have: "Google Workspace with Gemini. Staff on unmonitored personal AI accounts.",
+      unit: "Three named, tagged prompts, each with an owner.",
+      sandbox: "terrible_notes.txt",
+      ex: {
+        identify: "Staff use approved AI safely instead of unmonitored personal accounts. Done: a portal with two paths and a safe-prompt library that staff actually use.",
+        document: "The tasks staff already bring to AI → each prompt named, tagged and given an owner → a prompt library in the portal (Google Site or JIRA). Fixed: the naming and tagging scheme. Varies: the prompts and the tasks.",
+        experiment: "Three prompts in the library, each named, tagged, and with an owner.",
+        adjust: "Teachers' judgment and the approval of tools stay manual. FERPA and COPPA apply, with SSO and admin-console requirements. Upkeep: who reviews the library when tools change, for example when FlintK12 arrives?"
+      } },
+    { id: "marsal", shape: 3, name: "Marsal gift funds", flag: "",
+      have: "246 funds across several Excel sheets. The account number is consistent across all of them.",
+      unit: "One table joined on account number. No AI.",
+      sandbox: "funds_development.csv + funds_finance.csv",
+      ex: {
+        identify: "Answer questions about any fund from one place, and know when a donor is due for a letter. Done: one table with one row per fund.",
+        document: "Several Excel sheets from development, financial aid and finance → joined on account number → one table, one row per fund. Fixed: the account number, the same in every sheet. Varies: the columns, and who owns each sheet.",
+        experiment: "One table joined on account number. A join, not AI.",
+        adjust: "The stewardship manager maintains it; Financial Aid and Finance data is a later phase. Scholarship recipient names get anonymized or replaced with dummy data. Upkeep: when a sheet changes, does the join still line up?"
+      } },
+    { id: "wbb", shape: 3, name: "Women's Basketball", flag: "",
+      have: "Recruiting notes entered three times: Google Sheets, ARMS, JustPlay.",
+      unit: "One intake sheet keyed on player, instead of three entries.",
+      sandbox: "generate two sheets keyed on player (the funds pair is the pattern)",
+      ex: {
+        identify: "Enter recruiting notes once instead of three times, and give coaches a first pass at opponent tendencies. Done: one source of truth per player.",
+        document: "Notes in Google Sheets, ARMS and JustPlay → merged on player → one intake sheet plus paste-ready exports for ARMS and JustPlay. Fixed: the player key. Varies: each system's fields, and the XML exports from film platforms.",
+        experiment: "One intake sheet keyed on player as the source of truth, with paste-ready exports for ARMS and JustPlay.",
+        adjust: "The coach's read and anything public-facing stay manual. Recruiting and scouting information stays private; U-M tools are fine. Upkeep: who checks that the exports still paste cleanly when a system changes?"
+      } },
+    { id: "medfac", shape: 3, name: "Michigan Medicine Faculty Development", flag: "",
+      have: "Rank and attendance in two Tableau reports. Interest form not built yet.",
+      unit: "Tag each workshop description to interest categories.",
+      sandbox: "form_faculty_interest_responses.csv",
+      ex: {
+        identify: "Offerings reach faculty who will open them, leaving out what they already took. Done: each person sees offerings that fit their rank and interests.",
+        document: "Rank from the Faculty Affairs Tableau, attendance from the Faculty Development Tableau, interests from a new form → matched by rules → a personalized email or a sharper newsletter. Fixed: the workshop descriptions and interest categories. Varies: each person's rank, interests and attendance.",
+        experiment: "Tag each workshop description to interest categories, so offerings can be matched at all.",
+        adjust: "Little stays manual at send time if the rules are right; the monthly check of the interest list stays manual. Not sensitive, in the client's words; Level-2 SharePoint access. Upkeep: who maintains the interest list?"
+      } },
+    { id: "own", shape: 0, name: "Your own workflow", flag: "",
+      have: "Example: pull data from a sign-in sheet, format it into an email, send it every Monday. About 20 minutes a week.",
+      unit: "",
+      sandbox: "",
+      ex: {
+        identify: "The team gets an accurate, timely attendance summary every week without me assembling it by hand. Trigger: the start of a new week. Done: a formatted email in inboxes by Monday at 10 AM.",
+        document: "Sign-in sheet → pull the numbers, maybe calculate percentages → the email. Fixed: format, recipients, structure. Varies: the numbers, the date, who was absent.",
+        experiment: "Auto-fill a template with this week's numbers and still send it by hand. Or have AI write a script that formats the data, and review the output first.",
+        adjust: "What if someone changes the sign-in sheet, or a new team member joins? How would I know something went wrong, who else is affected, and what upkeep does it need?"
+      } }
+  ]
+};
+
+(function () {
+  "use strict";
+  const D = IDEA_DATA;
+  const STEPS = D.steps;
+  const CARD = STEPS.length; // index of the IDEA card view
+  const byId = {};
+  D.projects.forEach(function (p) { byId[p.id] = p; });
+  const mem = {}; // fallback when localStorage is unavailable
+
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  /* Answers persist per project and step under "aw:idea:<project>:<step>" (shared.js adds the "aw:" prefix). */
+  function pKey(pid, stepKey) { return "idea:" + pid + ":" + stepKey; }
+  function getAnswer(pid, stepKey) {
+    const k = pKey(pid, stepKey);
+    if (Object.prototype.hasOwnProperty.call(mem, k)) return mem[k];
+    return lsGet("aw:" + k) || "";
+  }
+  function shapeName(p) { return p.shape ? D.shapes[p.shape].name : "Your own workflow"; }
+  function shapeClass(p) { return p.shape ? " shape-" + p.shape : ""; }
+
+  const state = { pid: "own", step: 0 };
+  const savedPid = lsGet("aw:idea-ui:project");
+  if (savedPid && byId[savedPid]) state.pid = savedPid;
+  const savedStep = parseInt(lsGet("aw:idea-ui:step"), 10);
+  if (savedStep >= 0 && savedStep <= CARD) state.step = savedStep;
+
+  let els = {};
+  let clearTimer = null;
+
+  /* ---------- Section 1: shape overview and project cards ---------- */
+  function renderShapes() {
+    const legend = document.getElementById("shape-legend");
+    const host = document.getElementById("shape-groups");
+    if (!legend || !host) return;
+    let lg = "", html = "";
+    [1, 2, 3].forEach(function (s) {
+      const sh = D.shapes[s];
+      const list = D.projects.filter(function (p) { return p.shape === s; });
+      lg += '<a class="card shape-' + s + '" href="#shape-' + s + '">' +
+        '<span class="legend-top"><span class="shape-badge" aria-hidden="true">' + s + '</span>' +
+        '<span class="legend-name"><span class="visually-hidden">Shape ' + s + ': </span>' + esc(sh.name) + '</span></span>' +
+        '<p class="legend-tag">' + esc(sh.tag) + '</p>' +
+        '<span class="legend-meta">' + list.length + ' projects · ' + esc(sh.demo) + ' (demos start 2:45)</span></a>';
+      html += '<section class="shape-group shape-' + s + '" id="shape-' + s + '" aria-labelledby="shape-h-' + s + '">' +
+        '<div class="shape-head"><span class="shape-badge" aria-hidden="true">' + s + '</span><div>' +
+        '<p class="shape-kicker">Shape ' + s + ' · ' + list.length + ' projects · ' + esc(sh.demo) + ' shows this shape</p>' +
+        '<h3 id="shape-h-' + s + '">' + esc(sh.name) + '</h3>' +
+        '<p class="tag">' + esc(sh.tag) + '</p></div></div>' +
+        '<div class="proj-grid">';
+      list.forEach(function (p) {
+        html += '<article class="card proj-card shape-' + s + ' shape-bar">' +
+          '<h4>' + esc(p.name) + '</h4>' +
+          (p.flag ? '<span class="pill">' + esc(p.flag) + '</span>' : '') +
+          '<p class="have">' + esc(p.have) + '</p>' +
+          '<p class="unit"><span class="k">Smallest useful unit</span>' + esc(p.unit) + '</p>' +
+          '<button type="button" class="walk-btn" data-walk="' + esc(p.id) + '">Walk it through IDEA →<span class="visually-hidden"> (' + esc(p.name) + ')</span></button>' +
+          '</article>';
+      });
+      html += '</div></section>';
+    });
+    legend.innerHTML = lg;
+    host.innerHTML = html;
+    host.addEventListener("click", function (e) {
+      const b = e.target.closest ? e.target.closest("[data-walk]") : null;
+      if (!b) return;
+      selectProject(b.getAttribute("data-walk"));
+      setStep(0, false);
+      const walk = document.getElementById("walk");
+      walk.open = true;
+      walk.scrollIntoView({ block: "start", behavior: "smooth" });
+      els.select.focus({ preventScroll: true });
+    });
+  }
+
+  /* ---------- Section 4: the walkthrough ---------- */
+  function renderSelect() {
+    let html = "";
+    [1, 2, 3].forEach(function (s) {
+      html += '<optgroup label="Shape ' + s + ' · ' + esc(D.shapes[s].name) + '">';
+      D.projects.filter(function (p) { return p.shape === s; }).forEach(function (p) {
+        html += '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>';
+      });
+      html += '</optgroup>';
+    });
+    html += '<optgroup label="Or">';
+    D.projects.filter(function (p) { return !p.shape; }).forEach(function (p) {
+      html += '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>';
+    });
+    html += '</optgroup>';
+    els.select.innerHTML = html;
+    els.select.value = state.pid;
+  }
+
+  function renderHead() {
+    const p = byId[state.pid];
+    els.tool.className = "idea-tool" + shapeClass(p);
+    let html = '<p class="name">' + esc(p.name) + ' <span class="shape-pill">' + esc(shapeName(p)) + '</span>' +
+      (p.flag ? ' <span class="pill">' + esc(p.flag) + '</span>' : '') + '</p>' +
+      '<p>' + esc(p.have) + '</p>';
+    if (p.sandbox) html += '<p class="muted">Sandbox file for the hands-on: <code>' + esc(p.sandbox) + '</code></p>';
+    els.head.innerHTML = html;
+  }
+
+  function renderStepper() {
+    let html = "";
+    STEPS.forEach(function (st, i) {
+      const answered = getAnswer(state.pid, st.key).trim() !== "";
+      html += '<li><button type="button" data-step="' + i + '"' + (state.step === i ? ' aria-current="step"' : '') + '>' +
+        '<span class="sl" aria-hidden="true">' + esc(st.letter) + '</span>' + esc(st.name) +
+        '<span class="done" data-done="' + st.key + '"' + (answered ? '' : ' hidden') + '><span aria-hidden="true">✓</span><span class="visually-hidden"> (answered)</span></span>' +
+        '</button></li>';
+    });
+    html += '<li><button type="button" data-step="' + CARD + '"' + (state.step === CARD ? ' aria-current="step"' : '') + '>' +
+      '<span class="sl" aria-hidden="true">★</span>Your IDEA card</button></li>';
+    els.stepper.innerHTML = html;
+  }
+
+  function updateDoneMark(stepKey) {
+    const m = els.stepper.querySelector('[data-done="' + stepKey + '"]');
+    if (m) m.hidden = getAnswer(state.pid, stepKey).trim() === "";
+  }
+
+  function renderProgress() {
+    if (state.step < CARD) {
+      els.progText.textContent = "Step " + (state.step + 1) + " of " + STEPS.length + " · " + STEPS[state.step].name;
+      els.bar.style.width = ((state.step + 1) / STEPS.length * 100) + "%";
+    } else {
+      els.progText.textContent = "All 4 steps · Your IDEA card";
+      els.bar.style.width = "100%";
+    }
+  }
+
+  function renderPanel() {
+    const p = byId[state.pid];
+    if (state.step < CARD) {
+      const st = STEPS[state.step];
+      const k = pKey(p.id, st.key);
+      els.panel.innerHTML =
+        '<h3 class="panel-title" id="idea-step-title" tabindex="-1"><span class="letter" aria-hidden="true">' + esc(st.letter) + '</span>' + esc(st.name) + '</h3>' +
+        '<div class="panel-grid">' +
+          '<ul class="questions">' + st.questions.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join("") + '</ul>' +
+          '<div class="answer">' +
+            '<label for="idea-answer">Your team\'s answer: ' + esc(st.name) + '</label>' +
+            '<textarea id="idea-answer" rows="6" data-persist="' + esc(k) + '" placeholder="' + esc(st.placeholder) + '"></textarea>' +
+          '</div>' +
+        '</div>' +
+        '<details class="reveal"><summary>Show an example for this project</summary><p>' + esc(p.ex[st.key]) + '</p></details>';
+      const ta = document.getElementById("idea-answer");
+      ta.value = getAnswer(p.id, st.key);
+      if (window.awBindPersist) window.awBindPersist(els.panel);
+      ta.addEventListener("input", function () {
+        mem[k] = ta.value;
+        if (!window.awBindPersist) lsSet("aw:" + k, ta.value);
+        updateDoneMark(st.key);
+      });
+    } else {
+      let dl = "";
+      STEPS.forEach(function (st) {
+        const a = getAnswer(p.id, st.key).trim();
+        dl += '<dt><span class="letter" aria-hidden="true">' + esc(st.letter) + '</span>' + esc(st.name) + '</dt>' +
+          (a ? '<dd>' + esc(a) + '</dd>' : '<dd class="empty">Not answered yet</dd>');
+      });
+      els.panel.innerHTML =
+        '<div class="idea-card' + shapeClass(p) + '" id="idea-card">' +
+          '<p class="card-kicker">Our IDEA card</p>' +
+          '<h3 class="card-title" id="idea-step-title" tabindex="-1">' + esc(p.name) + ' <span class="shape-pill">' + esc(shapeName(p)) + '</span></h3>' +
+          '<dl>' + dl + '</dl>' +
+        '</div>' +
+        '<div class="card-actions">' +
+          '<button type="button" class="btn-lg btn-primary" id="idea-copy">Copy card</button>' +
+          '<button type="button" class="btn-lg" id="idea-print">Print card</button>' +
+        '</div>';
+      document.getElementById("idea-copy").addEventListener("click", function (e) { copyCard(e.currentTarget); });
+      document.getElementById("idea-print").addEventListener("click", printCard);
+    }
+  }
+
+  function renderNav() {
+    els.back.disabled = state.step === 0;
+    if (state.step < STEPS.length - 1) {
+      els.next.disabled = false;
+      els.next.textContent = "Next: " + STEPS[state.step + 1].name + " →";
+    } else if (state.step === STEPS.length - 1) {
+      els.next.disabled = false;
+      els.next.textContent = "See your IDEA card →";
+    } else {
+      els.next.disabled = true;
+      els.next.textContent = "Next →";
+    }
+  }
+
+  function disarmClear() {
+    if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; }
+    els.clear.classList.remove("arm");
+    els.clear.textContent = "Clear this project's answers";
+  }
+
+  function renderAll() { disarmClear(); renderHead(); renderStepper(); renderProgress(); renderPanel(); renderNav(); }
+
+  function setStep(i, moveFocus) {
+    state.step = Math.max(0, Math.min(CARD, i));
+    lsSet("aw:idea-ui:step", String(state.step));
+    renderStepper(); renderProgress(); renderPanel(); renderNav();
+    if (moveFocus) {
+      const h = document.getElementById("idea-step-title");
+      if (h) h.focus({ preventScroll: true });
+      const topbar = document.querySelector(".topbar");
+      const offset = topbar ? topbar.offsetHeight : 0;
+      if (els.progress.getBoundingClientRect().top < offset) {
+        els.progress.scrollIntoView({ block: "start", behavior: "smooth" });
+      }
+    }
+  }
+
+  function selectProject(pid) {
+    if (!byId[pid]) return;
+    state.pid = pid;
+    els.select.value = pid;
+    lsSet("aw:idea-ui:project", pid);
+    renderAll();
+  }
+
+  function cardText() {
+    const p = byId[state.pid];
+    const lines = ["IDEA card: " + p.name, "Shape: " + shapeName(p), ""];
+    STEPS.forEach(function (st) {
+      const a = getAnswer(p.id, st.key).trim();
+      lines.push(st.name + ": " + (a || "(not answered yet)"));
+      lines.push("");
+    });
+    return lines.join("\n").trim();
+  }
+
+  function copyCard(btn) {
+    const txt = cardText();
+    if (window.awCopy) { window.awCopy(txt, btn); return; }
+    try { navigator.clipboard.writeText(txt).then(function () { btn.textContent = "Copied"; }); } catch (e) { btn.textContent = "Copy failed"; }
+  }
+
+  function printCard() {
+    const root = document.documentElement;
+    root.classList.add("print-idea");
+    const done = function () { root.classList.remove("print-idea"); window.removeEventListener("afterprint", done); };
+    window.addEventListener("afterprint", done);
+    window.print();
+    setTimeout(done, 1000);
+  }
+
+  /* Two-click clear (no window.confirm, which some embedded viewers block). */
+  function clearProject() {
+    const p = byId[state.pid];
+    if (!els.clear.classList.contains("arm")) {
+      if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; } /* drop a pending "Cleared" reset */
+      els.clear.classList.add("arm");
+      els.clear.textContent = "Click again to clear all four answers";
+      clearTimer = setTimeout(disarmClear, 5000);
+      return;
+    }
+    disarmClear();
+    STEPS.forEach(function (st) {
+      const k = pKey(p.id, st.key);
+      mem[k] = "";
+      lsDel("aw:" + k);
+    });
+    renderStepper(); renderPanel();
+    els.clear.textContent = "Cleared";
+    clearTimer = setTimeout(disarmClear, 1500);
+  }
+
+  function init() {
+    els = {
+      tool: document.getElementById("idea-tool"),
+      select: document.getElementById("idea-project"),
+      head: document.getElementById("idea-head"),
+      stepper: document.getElementById("idea-stepper"),
+      progress: document.getElementById("idea-progress"),
+      progText: document.getElementById("idea-progress-text"),
+      bar: document.getElementById("idea-bar"),
+      panel: document.getElementById("idea-panel"),
+      back: document.getElementById("idea-back"),
+      next: document.getElementById("idea-next"),
+      clear: document.getElementById("idea-clear")
+    };
+    renderShapes();
+    renderSelect();
+    renderAll();
+    els.select.addEventListener("change", function () { selectProject(els.select.value); });
+    els.stepper.addEventListener("click", function (e) {
+      const b = e.target.closest ? e.target.closest("[data-step]") : null;
+      if (!b) return;
+      setStep(parseInt(b.getAttribute("data-step"), 10), false);
+      const cur = els.stepper.querySelector('[aria-current="step"]');
+      if (cur) cur.focus();
+    });
+    els.back.addEventListener("click", function () { setStep(state.step - 1, true); });
+    els.next.addEventListener("click", function () { setStep(state.step + 1, true); });
+    els.clear.addEventListener("click", clearProject);
+  }
+
+  /* Safe wherever this script sits: wait for the DOM before rendering. */
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+</body>
+</html>

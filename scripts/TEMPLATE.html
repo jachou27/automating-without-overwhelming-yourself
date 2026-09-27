@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two To Four Words</title>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="assets/shared.js" defer></script>
+<style>/* page-only styles; use var(--tokens) only, no hard-coded colors */</style>
+</head>
+<body>
+<header class="topbar"><div class="page">
+  <a class="brand" href="index.html">Automating Without Overwhelming Yourself</a>
+  <span class="crumb">N of 6 · TIME</span>
+  <nav class="section-nav" aria-label="Workshop sections">
+    <a href="index.html">Outline</a><a href="01-should-you-automate.html">1</a><a href="02-idea-your-projects.html">2</a><a href="03-tools-of-the-trade.html">3</a><a href="04-live-demos.html">4</a><a href="05-hands-on.html">5</a><a href="06-share-and-close.html">6</a>
+  </nav>
+  <!-- put aria-current="page" on this page's link -->
+  <div class="tools">
+    <button type="button" data-expand-all>Expand all</button>
+    <button type="button" data-collapse-all>Collapse all</button>
+    <button type="button" data-present-toggle aria-label="Bigger text for the projector">Bigger text</button>
+    <button type="button" data-theme-toggle aria-label="Switch light or dark">Theme</button>
+  </div>
+</div></header>
+<main class="page">
+  <section class="hero">
+    <div class="kicker">N · TIME · FORMAT</div>
+    <h1>Page heading</h1>
+    <p class="lede">One sentence on what this part of the session is for.</p>
+  </section>
+
+  <details class="section" open>
+    <summary><h2>First section (open by default)</h2><span class="meta">5 min</span></summary>
+    <div class="section-body">
+      <p>Content.</p>
+      <details class="notes"><summary>Speaker notes</summary><p>Two or three lines for Tina.</p></details>
+    </div>
+  </details>
+
+  <details class="section">
+    <summary><h2>Later sections start closed</h2><span class="meta">5 min</span></summary>
+    <div class="section-body"><p>Content.</p></div>
+  </details>
+
+  <nav class="pager" aria-label="Sections">
+    <a href="PREV.html">← N-1 · Previous title</a>
+    <a href="index.html">Outline</a>
+    <a href="NEXT.html">N+1 · Next title →</a>
+  </nav>
+</main>
+</body>
+</html>

@@ -1,0 +1,13 @@
+Timestamp,Email Address,PI name,Direction,Material (short description),Other party,Other party type,Will the material be used for commercial purposes?,Is there a patent or invention report on the material?,Is the material human-derived?,Is the material hazardous or export-controlled?,Does the other party request publication review or rights to results?,Requested by (date)
+9/21/2026 10:33:37,jlee@example.edu,Dr. Jordan Lee,Outgoing,HEK reporter cell line,Ohio State University,Academic / non-profit,No,No,No,No,No,2026-09-30
+9/21/2026 17:36:20,pnair@example.edu,Dr. Priya Nair,Incoming,Proprietary small molecule PF-1122,Pfizer,Commercial,No,Yes,No,No,Yes,2026-09-26
+9/24/2026 13:10:57,lferreira@example.edu,Dr. Lucas Ferreira,Outgoing,Mouse strain B6-Tg(Krt14),Jackson Laboratory,Academic / non-profit,No,No,No,No,No,
+9/24/2026 13:50:01,aosei@example.edu,Dr. Amara Osei,Outgoing,Plasmid pLL-GFP,University of Toronto,Academic / non-profit,No,No,No,No,No,2026-10-10
+9/25/2026 8:40:42,bkowal@example.edu,Dr. Ben Kowalski,Incoming,Antibody panel,BioLegend,Commercial,No,No,No,No,No,2026-10-01
+9/22/2026 13:23:54,ctran@example.edu,Dr. Chloe Tran,Outgoing,De-identified hair samples,Penn State,Academic / non-profit,No,No,Yes,No,No,2026-10-05
+9/24/2026 10:18:31,druiz@example.edu,Dr. Diego Ruiz,Outgoing,Zebrafish line mitfa-/-,Startup: Melanogen Inc.,Commercial,Yes,Yes,No,No,No,2026-10-15
+9/24/2026 13:00:59,elind@example.edu,Dr. Emma Lindgren,Incoming,Soil isolates,USDA ARS,Government,No,No,No,No,No,
+9/21/2026 10:37:02,fhaddad@example.edu,Dr. Farah Haddad,Outgoing,Yeast library,ETH Zurich,Academic / non-profit,No,No,No,Yes - export-controlled?,No,2026-11-01
+9/23/2026 13:01:24,gortiz@example.edu,Dr. Gabe Ortiz,Outgoing,HEK reporter cell line,Ohio State University,Academic / non-profit,No,No,No,No,No,2026-09-30
+9/24/2026 17:25:52,hsato@example.edu,Dr. Hana Sato,Incoming,Patient-derived organoids,Mayo Clinic,Academic / non-profit,No,No,Yes,No,Yes,2026-10-20
+9/25/2026 9:21:17,imbeki@example.edu,Dr. Isaac Mbeki,Outgoing,Custom peptide,Michigan State,Academic / non-profit,No,Not sure,No,No,No,2026-10-08

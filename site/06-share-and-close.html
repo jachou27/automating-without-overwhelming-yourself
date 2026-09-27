@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Share-out and Close</title>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="assets/shared.js"></script>
+<style>
+/* page-only styles; tokens only, no color literals */
+.two-up{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.grid{margin:18px 0}
+p.callout{max-width:none}
+.lead-line{font-size:clamp(19px,2.3vw,23px);line-height:1.5;margin:8px 0 16px}
+.format{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 8px}
+.format .pill{font-size:15px;padding:5px 14px}
+
+/* three share-out questions: huge and calm */
+ol.questions{list-style:none;counter-reset:q;padding:0;margin:10px 0 26px}
+ol.questions>li{counter-increment:q;max-width:none;margin:0;display:grid;grid-template-columns:auto 1fr;column-gap:24px;align-items:start;padding:26px 0;border-top:1px solid var(--line)}
+ol.questions>li:first-child{border-top:0;padding-top:12px}
+ol.questions>li::before{content:counter(q);grid-row:1 / span 2;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--maize-bg);color:var(--maize-ink);border:2px solid var(--maize);font-weight:800;font-size:24px;margin-top:4px}
+.q{display:block;font-family:ui-serif,"New York",Georgia,"Times New Roman",serif;font-size:clamp(32px,5vw,54px);font-weight:600;line-height:1.1;letter-spacing:-.015em;color:var(--heading)}
+.q,.q-sub{grid-column:2}
+.q-sub{display:block;margin-top:8px;color:var(--muted);font-size:clamp(18px,2vw,22px);line-height:1.45}
+@media (max-width:480px){ol.questions>li{column-gap:14px}ol.questions>li::before{width:42px;height:42px;font-size:19px}}
+
+/* two-minute timer */
+.timer{display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;margin:6px 0 4px;padding:20px 24px;border:2px solid var(--line);border-radius:var(--radius);background:var(--surface-2);transition:border-color .2s,background .2s}
+.timer-main{flex:1 1 240px;min-width:0}
+.timer-label{margin:0;font-weight:750;font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.timer-display{display:block;font-variant-numeric:tabular-nums;font-size:clamp(56px,10vw,96px);font-weight:800;line-height:1;letter-spacing:-.02em;margin:6px 0 4px;color:var(--heading)}
+.timer-status{margin:0;font-size:18px;font-weight:650;color:var(--muted)}
+.timer-bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:14px;max-width:420px}
+.timer-bar>span{display:block;height:100%;width:100%;background:var(--accent);border-radius:inherit;transition:width .2s linear}
+.timer-buttons{display:flex;gap:10px;flex-wrap:wrap}
+.timer-buttons button{min-width:110px;justify-content:center}
+.timer[data-state="running"]{border-color:var(--ok)}
+.timer[data-state="running"] .timer-status{color:var(--ok)}
+.timer[data-state="running"] .timer-bar>span{background:var(--ok)}
+.timer[data-state="warn"]{border-color:var(--warn);background:var(--warn-bg)}
+.timer[data-state="warn"] .timer-display,.timer[data-state="warn"] .timer-status{color:var(--warn)}
+.timer[data-state="warn"] .timer-bar>span{background:var(--warn)}
+.timer[data-state="done"]{border-color:var(--danger);background:var(--danger-bg)}
+.timer[data-state="done"] .timer-display,.timer[data-state="done"] .timer-status{color:var(--danger)}
+
+/* five parts flow */
+ol.flow{list-style:none;padding:0;margin:10px 0 8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+ol.flow>li{max-width:none;margin:0;display:flex;align-items:center;gap:10px;font-size:17px;font-weight:650}
+ol.flow>li>span{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2)}
+ol.flow>li+li::before{content:"→";color:var(--muted);font-weight:700}
+ol.flow>li.key>span{background:var(--maize-bg);border:2px solid var(--maize);color:var(--ink);font-weight:800}
+
+/* cards */
+.card p{margin:8px 0}
+.card h3.eyebrow{font-size:13px;font-weight:750;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:0 0 6px}
+.card .headline{font-size:clamp(19px,2.1vw,22px);font-weight:750;line-height:1.3;color:var(--heading);margin:4px 0 10px}
+.card .eg{font-size:16px;color:var(--muted)}
+.stat{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+.stat .num{font-size:clamp(34px,4.4vw,44px);font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--heading);font-variant-numeric:tabular-nums}
+.proj{font-weight:700}
+ul.plain{padding-left:22px;margin:8px 0}
+
+/* what stays manual */
+ul.manual-list{list-style:none;padding:0;margin:14px 0 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+ul.manual-list>li{max-width:none;margin:0;display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--shape,var(--accent));border-radius:12px;box-shadow:var(--shadow-sm)}
+ul.manual-list .what{font-size:clamp(19px,2.2vw,23px);font-weight:700;line-height:1.3;color:var(--heading)}
+ul.manual-list .pill{align-self:flex-start;border-color:var(--shape,var(--line));color:var(--shape,var(--ink));background:var(--surface)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:15px;color:var(--muted);margin:0 0 6px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--shape);margin-right:7px;vertical-align:1px}
+
+/* hand-off to the next session */
+.handoff{margin:24px 0 4px;padding:24px 26px;border-radius:var(--radius);background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow)}
+.handoff .when{margin:0;font-size:14px;font-weight:750;text-transform:uppercase;letter-spacing:.08em}
+.handoff .who{margin:8px 0 4px;font-size:clamp(30px,4vw,44px);font-weight:800;line-height:1.1;letter-spacing:-.02em}
+.handoff .talk{margin:0;font-size:clamp(18px,2.2vw,23px);line-height:1.4;max-width:none}
+.url{font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;font-size:15px;color:var(--muted);word-break:break-all}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="page">
+  <a class="brand" href="index.html">Automating Without Overwhelming Yourself</a>
+  <span class="crumb">6 of 6 · 4:05–4:30</span>
+  <nav class="section-nav" aria-label="Workshop sections">
+    <a href="index.html">Outline</a><a href="01-should-you-automate.html">1</a><a href="02-idea-your-projects.html">2</a><a href="03-tools-of-the-trade.html">3</a><a href="04-live-demos.html">4</a><a href="05-hands-on.html">5</a><a href="06-share-and-close.html" aria-current="page">6</a>
+  </nav>
+  <div class="tools">
+    <button type="button" data-expand-all>Expand all</button>
+    <button type="button" data-collapse-all>Collapse all</button>
+    <button type="button" data-present-toggle aria-label="Bigger text for the projector">Bigger text</button>
+    <button type="button" data-theme-toggle aria-label="Switch light or dark">Theme</button>
+  </div>
+</div></header>
+<main class="page">
+  <section class="hero">
+    <div class="kicker">6 · 4:05–4:30 · Share-outs</div>
+    <h1>Share-out and close</h1>
+    <p class="lede">Show what you built. Name what stays manual. Leave with a way to keep it working.</p>
+  </section>
+
+  <!-- 1. Share-out (open) -->
+  <details class="section" open>
+    <summary><h2>Share-out</h2><span class="meta">4:05–4:19 · 14 min</span></summary>
+    <div class="section-body">
+      <p class="format"><span class="pill">Three or four teams</span><span class="pill">Two minutes each</span></p>
+      <ol class="questions">
+        <li><span class="q">What did you automate?</span><span class="q-sub">One sentence: your smallest useful unit.</span></li>
+        <li><span class="q">What did it hit?</span><span class="q-sub">The duplicate, the blank field, two answers in one box.</span></li>
+        <li><span class="q">What stays manual?</span><span class="q-sub">The call you would not hand to a rule.</span></li>
+      </ol>
+
+      <div class="timer" id="timer" data-state="ready" role="group" aria-labelledby="timer-label">
+        <div class="timer-main">
+          <p class="timer-label" id="timer-label">Share-out timer</p>
+          <span class="timer-display" id="timer-display">2:00</span>
+          <p class="timer-status" id="timer-status" aria-live="polite">Ready: 2 minutes</p>
+          <div class="timer-bar" aria-hidden="true"><span id="timer-fill"></span></div>
+        </div>
+        <div class="timer-buttons">
+          <button type="button" class="btn-primary btn-lg" id="timer-start">Start</button>
+          <button type="button" class="btn-lg" id="timer-reset">Reset</button>
+        </div>
+      </div>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p><strong>Pacing for the 25 minutes.</strong> 4:05–4:19 share-outs. 4:19–4:23 Keep it alive and Make it findable. 4:23–4:25 What stays manual. 4:25–4:28 Before you automate the answer. 4:28–4:30 Want more, then hand to Charles at 4:30 sharp.</p>
+        <p>Pick teams from different shapes if you can: one intake → triage, one pile → catalog, one many sheets → one table.</p>
+        <p>Press Start as each team begins. Amber at 30 seconds. At 0:00, thank them, Reset, next team.</p>
+        <p>If a team hit a planted problem, ask: rule, or manual review?</p>
+        <p>Running long? Cut sections 2 and 3 to their headline line and go straight to section 5. Do not eat into Charles's time.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 2. Keep it alive -->
+  <details class="section">
+    <summary><h2>Keep it alive</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p class="big-quote">How would you know it broke?</p>
+      <p class="lead-line">From my course: “External systems change all the time.” An update ships, a feature gets renamed, a connection changes. Your automation stops.</p>
+
+      <h3>Every client project has the same five parts</h3>
+      <ol class="flow" aria-label="The five parts of an automation">
+        <li><span>Trigger</span></li>
+        <li><span>Extraction</span></li>
+        <li><span>Decision (rule or manual)</span></li>
+        <li><span>Write-back</span></li>
+        <li class="key"><span>Log</span></li>
+      </ol>
+      <p class="muted">The last one tells you it broke.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h3 class="eyebrow">Silent failures</h3>
+          <p class="headline">No error. It just stops.</p>
+          <p>No new rows, and nobody notices. Build one check that notices silence.</p>
+          <p class="eg"><span class="proj shape-1 shape-text">Zell’s</span> next step has the same idea: a weekly “no movement in 14 days” alert.</p>
+        </div>
+        <div class="card">
+          <h3 class="eyebrow">A simple log</h3>
+          <p class="headline">Every row gets a status and a timestamp.</p>
+          <p>“done” when it worked. “needs review” with a reason when it didn’t.</p>
+          <p class="eg">If the newest timestamp is old, something stopped.</p>
+        </div>
+        <div class="card">
+          <h3 class="eyebrow">Who maintains it?</h3>
+          <p class="headline">Name the person.</p>
+          <p class="stat"><span class="num">7 of 11</span><span>projects raise cost and upkeep.</span></p>
+          <p class="eg"><span class="proj shape-3 shape-text">Marsal:</span> the stewardship manager maintains it. <span class="proj shape-3 shape-text">Michigan Medicine:</span> a monthly check of the interest list.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>IDEA’s Adjust step asks:</strong></p>
+        <ul class="plain">
+          <li>What could break if something changes?</li>
+          <li>Who else is affected by this process?</li>
+          <li>What ongoing maintenance is required?</li>
+        </ul>
+      </div>
+      <p class="muted"><span class="proj shape-1 shape-text">CAI team:</span> make this your evaluation question. How would we know it broke, or paid off?</p>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About two minutes. Land one line: the log is the part that tells you it broke.</p>
+        <p>Optional 30 seconds: my Rube Goldberg story from the Module 1 video. Six months later something changes, the whole thing breaks, and I have no idea why.</p>
+        <p>Point back to the hands-on recipe: the backlog function writes “done” plus a timestamp. That is a log.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 3. Make it findable -->
+  <details class="section">
+    <summary><h2>Make it findable</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p class="big-quote">Capturing information is automation.</p>
+      <p class="lead-line">You are automating your future self’s ability to find things.</p>
+
+      <div class="grid two-up">
+        <div class="card">
+          <h3>1 · Easy enough that you’ll actually do it</h3>
+          <p><strong>Don’t:</strong> build templates, tagging systems and color codes.</p>
+          <p><strong>The System Graveyard:</strong> the productivity apps you used enthusiastically for a week, then never opened again.</p>
+          <p><strong>Do:</strong> a system you’ll use consistently, even if it’s imperfect. Quick capture, inside tools you already use.</p>
+        </div>
+        <div class="card">
+          <h3>2 · Add context to your notes</h3>
+          <p><strong>Avoid abbreviations.</strong> Write “conference”, not “conf.”</p>
+          <p><strong>Write for someone else.</strong> In six months, that person is you.</p>
+        </div>
+      </div>
+
+      <h3>Keyword vs. semantic search</h3>
+      <div class="grid two-up">
+        <div class="card surface-2">
+          <p class="headline">Keyword search</p>
+          <p>Matches the exact words or phrases.</p>
+        </div>
+        <div class="card surface-2">
+          <p class="headline">Semantic search</p>
+          <p>Matches meaning. A search for “Financial Forecast” also finds “Budget Planning” and “Resource Allocation”.</p>
+        </div>
+      </div>
+      <p>So you don’t have to guess your future keywords. Capture enough context that the meaning comes through.</p>
+
+      <h3>Key takeaways</h3>
+      <ol class="steps">
+        <li>Design for how you’ll actually search. Balance that against what’s easy to maintain.</li>
+        <li>Don’t make an all-or-nothing switch. Start with one project.</li>
+        <li>Use it for a week or two. Then honestly assess: am I actually using this?</li>
+      </ol>
+      <p class="callout"><strong>Good enough and consistent beats perfect but complicated.</strong></p>
+
+      <details class="reveal"><summary>Which projects is this?</summary>
+        <ul class="plain">
+          <li><strong class="shape-2 shape-text">Ginsberg:</strong> the catalog is what makes Maizey useful.</li>
+          <li><strong class="shape-2 shape-text">FJA:</strong> a prompt library is a catalog, with names, tags and owners.</li>
+          <li><strong class="shape-1 shape-text">Oakland County:</strong> retention tags on new records.</li>
+        </ul>
+      </details>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About two minutes. This is Module 3, the Capturing and Accessing Information video.</p>
+        <p>Example if you want one: a calendar event called “Echelon dinner” with no other context. What on earth is this?</p>
+        <p>Ginsberg, FJA and Oakland County teams: this section is your project.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 4. What stays manual -->
+  <details class="section">
+    <summary><h2>What stays manual</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p class="lead-line">Straight from your clients’ projects.</p>
+      <ul class="manual-list">
+        <li class="shape-1"><span class="what">Accept, waitlist or deny</span><span class="pill">Zell</span></li>
+        <li class="shape-1"><span class="what">Legal, regulatory and IP calls</span><span class="pill">MTA</span></li>
+        <li class="shape-2"><span class="what">What gets deleted</span><span class="pill">Ginsberg</span></li>
+        <li class="shape-1"><span class="what">Expert review of the shortlist</span><span class="pill">OVPR</span></li>
+        <li class="shape-3"><span class="what">The coach’s read, and anything public-facing</span><span class="pill">Women’s Basketball</span></li>
+        <li class="shape-1"><span class="what">Every FOIA response</span><span class="pill">Oakland County</span></li>
+      </ul>
+      <p class="legend"><span class="shape-1">Intake → triage</span><span class="shape-2">Pile → catalog</span><span class="shape-3">Many sheets → one table</span></p>
+      <p class="callout"><strong>When a row doesn’t fit the rules:</strong> mark it “needs review” with a reason. Don’t guess.</p>
+      <p class="lead-line">Some manual steps are the point. They keep you informed, build connection, or catch errors.</p>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>Quick. Ask the room: which of these is yours? One hand per team.</p>
+        <p>The OVPR line is worth saying out loud: reviewer trust is the product.</p>
+        <p>The last line is Value of Manual Processes from Module 1: the report you assemble by hand may be how you stay informed.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 5. Before you automate the answer -->
+  <details class="section">
+    <summary><h2>Before you automate the answer</h2><span class="meta">3 min</span></summary>
+    <div class="section-body">
+      <p class="big-quote">Consider that the current system may be fine, with no real problem to solve.</p>
+      <p class="lead-line">Sometimes the task shouldn’t exist at all. Maybe you don’t need an automated report. Maybe you need a five-minute conversation with your team.</p>
+      <p class="big-quote">Automation decisions require judgment, not just math.</p>
+
+      <div class="handoff" role="note" aria-label="Next session">
+        <p class="when">Next · 4:30</p>
+        <p class="who">Charles Kemp</p>
+        <p class="talk">Discovering the Problem Behind the Problem</p>
+      </div>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>If you want the “Solving the Wrong Problem” slides on screen, this is the moment.</p>
+        <p>Hand-off line: before you automate the answer, is it the right problem? Then Charles.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 6. Want more? -->
+  <details class="section">
+    <summary><h2>Want more?</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <div class="grid two-up">
+        <div class="card">
+          <h3 class="eyebrow">The course</h3>
+          <p class="headline">Systems Thinking for AI &amp; Automation</p>
+          <p>Part of the <strong>Applied AI: Data Analysis, Workflows, and Decisions</strong> series.</p>
+          <p class="eg">Today’s ideas come from it: the ROI question, IDEA, tool choice, and capturing information.</p>
+        </div>
+        <div class="card">
+          <h3 class="eyebrow">My ROI calculator</h3>
+          <p class="headline">Is it worth the time to build?</p>
+          <p>Check before you start.</p>
+          <p><a class="btn btn-primary btn-lg" href="https://tinalasisi.github.io/roi-calculator-github-pages/" target="_blank" rel="noopener">Open the ROI calculator</a></p>
+          <p class="url">tinalasisi.github.io/roi-calculator-github-pages/</p>
+        </div>
+      </div>
+      <p class="callout"><strong>Try it on your own week:</strong> list five repetitive tasks. Run IDEA on each. Check the ROI. Pick one.</p>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>Say the series name in full. Leave the calculator URL on screen while Charles sets up.</p>
+        <p>The last line is the Module 1 self-audit activity.</p>
+      </details>
+    </div>
+  </details>
+
+  <nav class="pager" aria-label="Sections">
+    <a href="05-hands-on.html">← 5 · Build your smallest useful unit</a>
+    <a href="index.html">Outline</a>
+    <a href="index.html">Back to the outline →</a>
+  </nav>
+</main>
+<script>
+(function(){
+  var TOTAL_MS=120000, WARN_MS=30000;
+  var box=document.getElementById('timer');
+  var display=document.getElementById('timer-display');
+  var statusEl=document.getElementById('timer-status');
+  var fill=document.getElementById('timer-fill');
+  var startBtn=document.getElementById('timer-start');
+  var resetBtn=document.getElementById('timer-reset');
+  if(!box||!display||!statusEl||!startBtn||!resetBtn)return;
+  var remaining=TOTAL_MS, endAt=0, tick=null;
+  function fmt(ms){
+    var s=Math.max(0,Math.ceil(ms/1000));
+    return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  }
+  function setState(state,msg){
+    box.setAttribute('data-state',state);
+    if(statusEl.textContent!==msg)statusEl.textContent=msg;
+  }
+  function render(){
+    display.textContent=fmt(remaining);
+    if(fill)fill.style.width=(Math.max(0,Math.min(1,remaining/TOTAL_MS))*100).toFixed(2)+'%';
+  }
+  function stop(){if(tick!==null){clearInterval(tick);tick=null;}}
+  function step(){
+    remaining=endAt-Date.now();
+    if(remaining<=0){
+      remaining=0;stop();render();
+      var hadFocus=document.activeElement===startBtn;
+      startBtn.textContent='Start';startBtn.disabled=true;
+      if(hadFocus)resetBtn.focus();
+      setState('done','Time. Thank the team and switch.');
+      return;
+    }
+    render();
+    if(remaining<=WARN_MS)setState('warn','30 seconds left');
+  }
+  startBtn.addEventListener('click',function(){
+    if(tick!==null){
+      stop();remaining=Math.max(0,endAt-Date.now());render();
+      startBtn.textContent='Resume';
+      setState('paused','Paused');
+      return;
+    }
+    if(remaining<=0)return;
+    endAt=Date.now()+remaining;
+    tick=setInterval(step,200);
+    startBtn.textContent='Pause';
+    if(remaining<=WARN_MS)setState('warn','30 seconds left');else setState('running','Running');
+  });
+  resetBtn.addEventListener('click',function(){
+    stop();remaining=TOTAL_MS;render();
+    startBtn.textContent='Start';startBtn.disabled=false;
+    setState('ready','Ready: 2 minutes');
+    startBtn.focus();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

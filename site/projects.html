@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Projects</title>
+<style>
+:root{
+  --bg:#faf9f6; --surface:#ffffff; --ink:#1d1d1b; --muted:#5f5e5a; --line:#e4e1da;
+  --accent:#00274c; --maize:#b58500; --a:#2f6f5e; --b:#7a4b9c; --c:#b3541e; --m:#3d5a80;
+  --nda:#a4262c; --ndabg:#fbeaea; --umsi:#8a5a00; --umsibg:#fdf3dc; --form:#1f6f43; --formbg:#e6f4ec;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141413; --surface:#1e1e1c; --ink:#ecebe6; --muted:#a8a69e; --line:#34332f;
+  --accent:#9cc3ff; --maize:#ffcb05; --a:#6fc2a8; --b:#c39be0; --c:#f0a070; --m:#9db8e0;
+  --nda:#ff8a8f; --ndabg:#3a1f20; --umsi:#ffd27a; --umsibg:#3a2f14; --form:#7fd6a4; --formbg:#1b3326;
+}}
+:root[data-theme="dark"]{
+  --bg:#141413; --surface:#1e1e1c; --ink:#ecebe6; --muted:#a8a69e; --line:#34332f;
+  --accent:#9cc3ff; --maize:#ffcb05; --a:#6fc2a8; --b:#c39be0; --c:#f0a070; --m:#9db8e0;
+  --nda:#ff8a8f; --ndabg:#3a1f20; --umsi:#ffd27a; --umsibg:#3a2f14; --form:#7fd6a4; --formbg:#1b3326;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 20px}
+h2{font-size:17px;margin:32px 0 10px;display:flex;align-items:center;gap:8px}
+h2 .dot{width:10px;height:10px;border-radius:50%}
+h2 small{font-weight:400;color:var(--muted);font-size:14px}
+.pitch{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:0 0 8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat b{display:block;font-size:22px;color:var(--accent);line-height:1.1}
+.stat span{color:var(--muted);font-size:13.5px}
+.note{color:var(--muted);font-size:13.5px;margin:6px 0 0}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td a{color:var(--ink);text-decoration:none;font-weight:600}
+td a:hover{text-decoration:underline}
+.tablewrap{overflow-x:auto}
+.badge{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 7px;border-radius:999px;margin:0 4px 2px 0;white-space:nowrap}
+.b-nda{color:var(--nda);background:var(--ndabg)}
+.b-umsi{color:var(--umsi);background:var(--umsibg)}
+.b-form{color:var(--form);background:var(--formbg)}
+.fam{font-size:12px;font-weight:700;letter-spacing:.03em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(460px,1fr));gap:12px}
+@media (max-width:560px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--famc);border-radius:10px;padding:14px 16px;scroll-margin-top:12px}
+.card h3{margin:0 0 2px;font-size:16px}
+.who{color:var(--muted);font-size:13px;margin:0 0 8px}
+.unit{background:color-mix(in srgb,var(--maize) 12%,transparent);border-radius:8px;padding:8px 10px;margin:8px 0}
+.unit .k{color:var(--maize)}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px}
+dt{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px;white-space:nowrap}
+dd{margin:0}
+.k{font-size:12px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;display:block;margin-bottom:2px}
+code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:color-mix(in srgb,var(--ink) 7%,transparent);padding:1px 5px;border-radius:4px;word-break:break-word}
+.fa{--famc:var(--a)} .fb{--famc:var(--b)} .fc{--famc:var(--c)} .fm{--famc:var(--m)}
+.foot{margin-top:28px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Your projects, three shapes</h1>
+<p class="sub">Automating Without Overwhelming Yourself · AI Clinic Bootcamp · Sunday, September 27</p>
+<div class="pitch">
+  <div class="stat"><b>9 of 11</b><span>say the reliable outcome is workflow analysis, design concepts, working prompts and a roadmap; a prototype only if skills allow.</span></div>
+  <div class="stat"><b>8 of 11</b><span>say they are open to simpler or non-AI approaches. Deciding what to automate comes first.</span></div>
+  <div class="stat"><b>7 of 11</b><span>raise cost and upkeep: who maintains it, ongoing tool costs, energy use.</span></div>
+  <div class="stat"><b>7 of 11</b><span>involve sensitive data or an NDA. Most name U-M GPT or Maizey as the only place client data may go.</span></div>
+</div>
+<p class="note">Every project has the same anatomy: something arrives, structured bits get pulled out, a rule or a person decides, a record gets written, and someone needs to notice when it silently stops working.</p>
+
+<h2>At a glance</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Project</th><th>Shape</th><th>Flags</th><th>Smallest useful unit</th><th>Sandbox file</th></tr></thead>
+<tbody>
+<tr><td><a href="#zell">Zell Entrepreneurship Clinic</a></td><td class="fam" style="color:var(--a)">Intake → triage</td><td><span class="badge b-umsi">UMSI NDA</span><span class="badge b-form">Google Form</span></td><td>Form response becomes a pipeline row with status and timestamp</td><td><code>form_zell_application_responses.csv</code></td></tr>
+<tr><td><a href="#mta">Innovation Partnerships MTA</a></td><td class="fam" style="color:var(--a)">Intake → triage</td><td><span class="badge b-umsi">UMSI NDA + IP</span><span class="badge b-form">eRPM form</span></td><td>Eligibility rules mark each request eligible, not, or needs review</td><td><code>form_mta_screening_responses.csv</code></td></tr>
+<tr><td><a href="#dining">Michigan Dining sustainability</a></td><td class="fam" style="color:var(--a)">Intake → triage</td><td><span class="badge b-form">5 Google Forms</span></td><td>One form response becomes a draft next-steps memo for review</td><td><code>form_dining_sustainability_responses.csv</code></td></tr>
+<tr><td><a href="#ovpr">OVPR limited submissions</a></td><td class="fam" style="color:var(--a)">Intake → triage</td><td><span class="badge b-umsi">UMSI NDA</span><span class="badge b-form">InfoReady</span></td><td>One funder's criteria become a rubric staff approve</td><td><code>requests_inbox.csv, or build your own form</code></td></tr>
+<tr><td><a href="#oakland">Oakland County records / FOIA</a></td><td class="fam" style="color:var(--a)">Intake → triage</td><td><span class="badge b-nda">Client NDA</span></td><td>One FOIA request becomes a row: requester, scope, date range</td><td><code>requests_inbox.csv</code></td></tr>
+<tr><td><a href="#cai">CAI AI Enablement</a></td><td class="fam" style="color:var(--a)">Intake → triage</td><td><span class="badge b-nda">Client NDA</span></td><td>The IDEA and ROI worksheet used as the intake form</td><td><code>requests_inbox.csv</code></td></tr>
+<tr><td><a href="#ginsberg">Ginsberg Center archive</a></td><td class="fam" style="color:var(--b)">Pile → catalog</td><td></td><td>File inventory with exact duplicates flagged</td><td><code>shared_drive_dump.csv</code></td></tr>
+<tr><td><a href="#fja">FJA staff AI portal</a></td><td class="fam" style="color:var(--b)">Pile → catalog</td><td></td><td>Three named, tagged prompts with an owner</td><td><code>terrible_notes.txt</code></td></tr>
+<tr><td><a href="#marsal">Marsal gift funds</a></td><td class="fam" style="color:var(--c)">Many sheets → one table</td><td></td><td>One table joined on account number. No AI.</td><td><code>funds_development.csv + funds_finance.csv</code></td></tr>
+<tr><td><a href="#wbb">Women's Basketball</a></td><td class="fam" style="color:var(--c)">Many sheets → one table</td><td></td><td>One intake sheet keyed on player, instead of three entries</td><td>Generate two sheets keyed on player</td></tr>
+<tr><td><a href="#facdev">Michigan Medicine Faculty Development</a></td><td class="fam" style="color:var(--c)">Many sheets → one table</td><td><span class="badge b-form">New interest form</span></td><td>Tag each workshop description to interest categories</td><td><code>form_faculty_interest_responses.csv</code></td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">The smallest useful unit is a starting point to argue with, not an assignment. Every sandbox file is fake: use it instead of client data today.</p>
+
+<h2><span class="dot" style="background:var(--a)"></span>Intake → triage <small>Demo 1 · Something arrives; a rule or a person decides; a record gets written.</small></h2>
+<div class="cards">
+<div class="card fa" id="zell">
+<h3>Zell Entrepreneurship Clinic (Law)</h3>
+<p class="who">Tifani Sadek, Alissa Cammarata · <span class="badge b-umsi">UMSI NDA (non-IP)</span><span class="badge b-form">Google Form</span></p>
+<dl>
+<dt>Have</dt><dd>75–100 applications a year through one joint Google Form. The administrator copies each into the "ZEC Pipeline" sheet: status tabs, about 800 rows since 2020, a written SOP. Law-student teams do intake. Annual stats are tabulated by hand. Applicants get lost.</dd>
+<dt>Out of scope</dt><dd>Clio and Dropbox.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>Form submission lands as a row with status and timestamp. Apps Script, no AI. The copy-paste step is the whole cost.</div>
+<dl>
+<dt>Then</dt><dd>AI one-line summary of business and legal issues; a weekly "no movement in 14 days" alert; annual stats from the same table.</dd>
+<dt>Stays manual</dt><dd>Accept, waitlist, deny; routing between the two clinics.</dd>
+<dt>Data</dt><dd>Applicants are told not to include confidential information. U-M tools preferred.</dd>
+</dl>
+</div>
+
+<div class="card fa" id="mta">
+<h3>Innovation Partnerships MTA (OVPR)</h3>
+<p class="who">Qing Wang, Maggie Swift · <span class="badge b-umsi">UMSI NDA with IP</span><span class="badge b-form">eRPM questionnaire</span></p>
+<dl>
+<dt>Have</dt><dd>High volume of material transfer agreement requests. A screening questionnaire in eRPM identifies low-risk transfers eligible for a non-negotiated agreement. Review and document prep are manual today.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>Eligibility written as explicit rules from the questionnaire, marking each request eligible, not eligible, or needs review.</div>
+<dl>
+<dt>Then</dt><dd>Auto-fill the standard template and send for signature. AI only to extract fields from free-text answers and flag ambiguity.</dd>
+<dt>Stays manual</dt><dd>Anything the gate does not clear: legal, regulatory, IP.</dd>
+<dt>Data</dt><dd>The forms are not confidential. Maizey over public tools.</dd>
+</dl>
+</div>
+
+<div class="card fa" id="dining">
+<h3>Michigan Dining sustainability</h3>
+<p class="who">Keith Soster, Kenzie Winslow · <span class="badge b-form">5 Google Forms, one per pillar</span></p>
+<dl>
+<dt>Have</dt><dd>Existing Google Forms on five sustainability pillars. They envision a tool that reads the inputs, evaluates against best practices, and emails a PDF next-steps report with resources. Version one: review current work against campus goals, suggest next steps, point to resources.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>One form response becomes a draft next-steps memo, using campus goals and best practices as the rubric, for Kenzie to review.</div>
+<dl>
+<dt>Then</dt><dd>Draft PDF, review, email. The whole pipeline fits in Apps Script plus one LLM call.</dd>
+<dt>Stays manual</dt><dd>Review before anything reaches a respondent, at least until trust is earned.</dd>
+<dt>Data</dt><dd>No sensitivities. They asked about the energy and cost of the tool.</dd>
+</dl>
+</div>
+
+<div class="card fa" id="ovpr">
+<h3>OVPR limited submissions (ORD)</h3>
+<p class="who">Lynsey Fitzpatrick, Henry Dyson · graduate team · <span class="badge b-umsi">UMSI NDA</span><span class="badge b-form">InfoReady</span></p>
+<dl>
+<dt>Have</dt><dd>About 250 applications a year in InfoReady. Three reviewers at 30 minutes each; decisions in one to two weeks; feedback quality varies. They want explainable help with manual review built in: funder criteria to rubric, a rubric-aligned first pass, draft feedback, a shortlist for experts.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>One funder's criteria turned into an award-specific rubric that staff approve.</div>
+<dl>
+<dt>Then</dt><dd>Structured first-pass review of each application against that rubric, with quoted evidence; draft applicant feedback. They asked to test on synthetic applications.</dd>
+<dt>Stays manual</dt><dd>Every decision. Experts review the shortlist. Reviewer trust is the product.</dd>
+<dt>Data</dt><dd>Confidential review; institutional tools only; explainability required.</dd>
+</dl>
+</div>
+
+<div class="card fa" id="oakland">
+<h3>Oakland County records / FOIA</h3>
+<p class="who">Jonathon Baugh (CTO), Manju Chikkanna · <span class="badge b-nda">Client NDA</span></p>
+<dl>
+<dt>Have</dt><dd>A policy project first: retention and governance for AI-generated records. AI-generated FOIA requests are arriving at scale. Email retention has no disposal timeline.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>If the team wants a build: one FOIA request becomes a row with requester, scope, systems implicated, and date range.</div>
+<dl>
+<dt>Then</dt><dd>Dedup near-identical AI-generated requests; route to the right department; tag new records with a retention schedule.</dd>
+<dt>Stays manual</dt><dd>Every response; the policy recommendations.</dd>
+<dt>Data</dt><dd>Private materials only inside County-provided tools.</dd>
+</dl>
+</div>
+
+<div class="card fa" id="cai">
+<h3>CAI AI Enablement</h3>
+<p class="who">Marina Martynenko, Jeremy Nelson · <span class="badge b-nda">Client NDA</span></p>
+<dl>
+<dt>Have</dt><dd>Designing intake, prioritization, delivery, evaluation and handoff for an enablement function. Use cases: hiring workflows, MOU and contract review, course creation, studio health reporting. They want Claude Code and Codex experience.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>The IDEA and ROI worksheet used as their intake form; "how would we know it broke or paid off" as their evaluation criterion.</div>
+<dl>
+<dt>Then</dt><dd>Take one use case end to end. Studio health reporting is the safest.</dd>
+<dt>Stays manual</dt><dd>Personnel and legal decisions.</dd>
+<dt>Data</dt><dd>Approved tools only; privacy review before sensitive use cases.</dd>
+</dl>
+</div>
+</div>
+
+<h2><span class="dot" style="background:var(--b)"></span>Pile → catalog <small>Demo 2 · Find it later: capture, name, retrieve.</small></h2>
+<div class="cards">
+<div class="card fb" id="ginsberg">
+<h3>Ginsberg Center archive</h3>
+<p class="who">Dave Waterhouse, Neeraja Aravamudan</p>
+<dl>
+<dt>Have</dt><dd>1,000+ SERVE files from 2000–2010 on the M: drive, many duplicated or versioned, some with student ID numbers. Maizey already used on small Drive collections. They want an annotated catalog, a tested sort-and-summarize approach, duplicate flags, and a roadmap.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>An inventory script writing name, date, size and hash to a sheet, with exact duplicates flagged by hash.</div>
+<dl>
+<dt>Then</dt><dd>First 300 words per file, AI summary, version clustering, catalog sheet, Maizey over the curated set.</dd>
+<dt>Stays manual</dt><dd>Which version is "best"; what to delete; files with PII.</dd>
+<dt>Data</dt><dd>Files with student IDs are deleted, not indexed.</dd>
+</dl>
+</div>
+
+<div class="card fb" id="fja">
+<h3>FJA staff AI portal</h3>
+<p class="who">Paul Sanborn, Mitch Rosenwasser · small private high school</p>
+<dl>
+<dt>Have</dt><dd>Google Workspace with Gemini; FlintK12 coming. Staff use unmonitored personal AI accounts. They want a portal (Google Site or JIRA) with two paths, a safe-prompt library, and user research.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>Three prompts in the library, each named, tagged, and with an owner.</div>
+<dl>
+<dt>Then</dt><dd>Two or three concrete office automations, such as parent-email drafts from a template or sorting form data, so the portal has working examples and not just links.</dd>
+<dt>Stays manual</dt><dd>Teachers' judgment; approval of tools.</dd>
+<dt>Data</dt><dd>FERPA and COPPA; SSO and admin-console requirements.</dd>
+</dl>
+</div>
+</div>
+
+<h2><span class="dot" style="background:var(--c)"></span>Many sheets → one table <small>Demo 3 · Two sources, one truth: join on a shared key, then act on the combined table.</small></h2>
+<div class="cards">
+<div class="card fc" id="marsal">
+<h3>Marsal gift funds</h3>
+<p class="who">Krissa Rumsey, Frankie Moore</p>
+<dl>
+<dt>Have</dt><dd>246 funds across several Excel sheets, the largest 246 rows by 17 columns. The account number is consistent across all of them. Maizey could not read the spreadsheets. Three data owners: development, financial aid, finance.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>One table joined on account number. A join, not AI.</div>
+<dl>
+<dt>Then</dt><dd>A Q&amp;A layer over the table; stewardship dates driving alerts such as "no letter to this donor in 12 months".</dd>
+<dt>Stays manual</dt><dd>The stewardship manager maintains it. Financial Aid and Finance data is a later phase.</dd>
+<dt>Data</dt><dd>Scholarship recipient names get anonymized or replaced with dummy data.</dd>
+</dl>
+</div>
+
+<div class="card fc" id="wbb">
+<h3>Women's Basketball</h3>
+<p class="who">Dillon Carson, Amy Mulligan · prefers Nov 1</p>
+<dl>
+<dt>Have</dt><dd>Recruiting notes entered three times: Google Sheets, ARMS, JustPlay. Film platforms export XML play-by-play and stat reports. They want first-pass opponent tendencies and scouting notes a coach refines.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>One intake sheet keyed on player as the source of truth, with paste-ready exports for ARMS and JustPlay.</div>
+<dl>
+<dt>Then</dt><dd>Separately: XML log to a tendency summary that the coach edits.</dd>
+<dt>Stays manual</dt><dd>The coach's read; anything public-facing.</dd>
+<dt>Data</dt><dd>Recruiting and scouting information stays private. U-M tools are fine.</dd>
+</dl>
+</div>
+
+<div class="card fc" id="facdev">
+<h3>Michigan Medicine Faculty Development</h3>
+<p class="who">Laura Denton, Durga Singer · <span class="badge b-form">interest form, not built yet</span></p>
+<dl>
+<dt>Have</dt><dd>Rank from the Faculty Affairs Tableau; attendance from the Faculty Development Tableau; interests still to be collected. They want offerings pushed to faculty who will open them, excluding what they already took.</dd>
+</dl>
+<div class="unit"><span class="k">Smallest useful unit</span>Tag each workshop description to interest categories, so offerings can be matched at all.</div>
+<dl>
+<dt>Then</dt><dd>Matching as rules: rank by interests by not-yet-attended; AI drafts the personalized email. Start by sharpening the newsletter they already send.</dd>
+<dt>Stays manual</dt><dd>Little at send time if the rules are right; a monthly check of the interest list.</dd>
+<dt>Data</dt><dd>Not sensitive, in their words. Level-2 SharePoint access.</dd>
+</dl>
+</div>
+</div>
+
+<p class="foot">From the AI Clinic project list. Client data stays in the tools your client and U-M have approved for it.</p>
+</div>
+</body>
+</html>

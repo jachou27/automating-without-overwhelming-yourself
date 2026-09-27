@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Should You Automate?</title>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="assets/shared.js"></script>
+<style>
+/* page-only styles; var(--tokens) only. Sizes in em scale with the "Bigger text" toggle. */
+.display-q{font-size:clamp(30px,5vw,52px);font-weight:800;line-height:1.08;letter-spacing:-.025em;color:var(--heading);margin:6px 0 24px;max-width:none}
+.say{font-size:1.2em;line-height:1.45;margin:8px 0 16px}
+.label{display:block;font-size:13px;font-weight:750;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.section-body>.big-quote{margin:6px 0 22px}
+
+/* 1 · the comic: grayscale art on white. color-scheme:light makes the Canvas system color resolve to white in both themes. */
+.comic{margin:0 0 22px}
+.comic-panel{color-scheme:light;background:Canvas;border:1px solid var(--line);border-radius:18px;padding:clamp(10px,2.4vw,28px);box-shadow:var(--shadow)}
+.comic-panel img{display:block;width:100%;margin:0 auto}
+.comic figcaption{text-align:center;font-size:15px;margin-top:12px}
+.read-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:12px;margin:0}
+.read-row .card{margin:0}
+.read-row .v{display:block;font-size:1.05em;font-weight:650;line-height:1.35;margin-top:6px}
+.read-row .example{background:var(--maize-bg);border-color:var(--maize)}
+.read-row .example .label{color:var(--maize-ink)}
+.read-row .example .big{display:block;font-size:clamp(28px,3.4vw,38px);font-weight:800;line-height:1.05;letter-spacing:-.02em;color:var(--heading);margin-top:6px}
+
+/* 2 · calculator */
+.calc-layout{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px;align-items:start;margin:4px 0 8px}
+@media (max-width:780px){.calc-layout{grid-template-columns:minmax(0,1fr)}}
+.calc-panel{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;margin:0}
+.field{margin:0 0 16px}
+.field label{display:block;font-size:17px;margin-bottom:6px}
+.field .hint{font-weight:400;color:var(--muted);font-size:14px}
+.calc-panel select,.calc-panel input[type=number]{font-size:19px;padding:10px 12px}
+.calc-buttons{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:4px}
+.calc-buttons button{text-align:left}
+.result{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px 22px;box-shadow:var(--shadow)}
+.result-num{font-size:clamp(44px,6.4vw,76px);font-weight:800;line-height:1;letter-spacing:-.035em;color:var(--heading);margin:10px 0 12px;max-width:none}
+.result-main{font-size:1.2em;font-weight:600;line-height:1.4;margin:0}
+.result-sub{margin:10px 0 0;color:var(--muted);font-size:16px}
+.verdict{border:1px solid var(--line);border-left-width:8px;border-radius:12px;padding:12px 16px;margin:16px 0 0}
+.verdict[hidden]{display:none}
+.verdict-label{font-size:clamp(24px,3vw,32px);font-weight:800;line-height:1.15;margin:0}
+.verdict p{margin:6px 0 0}
+.verdict.is-yes{background:var(--ok-bg);border-left-color:var(--ok)}
+.verdict.is-yes .verdict-label{color:var(--ok)}
+.verdict.is-even{background:var(--warn-bg);border-left-color:var(--warn)}
+.verdict.is-even .verdict-label{color:var(--warn)}
+.verdict.is-no{background:var(--danger-bg);border-left-color:var(--danger)}
+.verdict.is-no .verdict-label{color:var(--danger)}
+.fine{font-size:15px;color:var(--muted);margin:10px 0 0}
+
+/* 3 to 6 · talk blocks */
+.q-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px;margin:0 0 18px;padding:0;list-style:none}
+.q-grid li{margin:0;max-width:none;display:flex;flex-direction:column;gap:10px}
+.q-num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:750;font-size:16px}
+.q-grid p{margin:0;font-size:1.12em;font-weight:650;line-height:1.35}
+.callout p{margin:0}
+.callout.lg{font-size:1.15em;line-height:1.45;padding:16px 20px}
+.big-list{padding-left:1.2em;margin:4px 0 18px}
+.big-list li{font-size:1.2em;line-height:1.4;margin:10px 0}
+.stat{display:flex;flex-wrap:wrap;align-items:center;gap:6px 20px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:16px 22px;margin:20px 0}
+.stat b{font-size:clamp(40px,5.4vw,60px);line-height:1;font-weight:800;letter-spacing:-.03em;color:var(--heading);white-space:nowrap}
+.stat span{flex:1 1 240px;font-size:1.1em;line-height:1.4}
+.cost-card .card-quote{font-family:ui-serif,"New York",Georgia,"Times New Roman",serif;font-size:1.3em;font-weight:600;line-height:1.3;color:var(--heading);margin:2px 0 12px}
+.cost-card ul{margin:0 0 4px;padding-left:1.2em}
+.lose-card{display:flex;flex-direction:column}
+.lose-card .task{margin:0 0 14px;color:var(--muted)}
+.lose-card details.reveal{margin:auto 0 0}
+.lose-card .lose-word{display:block;font-size:clamp(24px,2.8vw,30px);font-weight:800;line-height:1.15;color:var(--heading);margin:10px 0 4px}
+.lose-card details.reveal p{margin:0 0 4px}
+
+/* 7 · IDEA and the three shapes */
+.idea-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px;margin:10px 0 24px;padding:0;list-style:none}
+.idea-row li{position:relative;margin:0;max-width:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 16px;box-shadow:var(--shadow-sm)}
+.idea-row .letter{display:block;font-size:40px;font-weight:800;line-height:1;color:var(--muted);margin-bottom:6px}
+.idea-row h3{margin:0 0 6px;font-size:22px}
+.idea-row p{margin:0;font-size:17px}
+.idea-row .is-today{border:3px solid var(--maize);background:var(--maize-bg)}
+.idea-row .is-today .letter{color:var(--maize-ink)}
+.idea-row .is-today .pill{position:absolute;top:12px;right:12px}
+.shape-list{list-style:none;padding:0;margin:8px 0 20px;display:grid;gap:10px}
+.shape-list li{margin:0;max-width:none;background:var(--surface-2);border-radius:10px;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.shape-list b{font-size:1.15em}
+.shape-list .desc{flex:1 1 300px}
+.next-row{margin:20px 0 4px}
+@media (max-width:640px){.pager>span{display:none}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="page">
+  <a class="brand" href="index.html">Automating Without Overwhelming Yourself</a>
+  <span class="crumb">1 of 6 · 1:45–2:00</span>
+  <nav class="section-nav" aria-label="Workshop sections">
+    <a href="index.html">Outline</a><a href="01-should-you-automate.html" aria-current="page">1</a><a href="02-idea-your-projects.html">2</a><a href="03-tools-of-the-trade.html">3</a><a href="04-live-demos.html">4</a><a href="05-hands-on.html">5</a><a href="06-share-and-close.html">6</a>
+  </nav>
+  <div class="tools">
+    <button type="button" data-expand-all>Expand all</button>
+    <button type="button" data-collapse-all>Collapse all</button>
+    <button type="button" data-present-toggle aria-label="Bigger text for the projector">Bigger text</button>
+    <button type="button" data-theme-toggle aria-label="Switch light or dark">Theme</button>
+  </div>
+</div></header>
+<main class="page">
+  <section class="hero">
+    <div class="kicker">1 · 1:45–2:00 · 15-minute talk</div>
+    <h1>Should you automate it?</h1>
+    <p class="lede">Before we build anything, the most underrated question in this whole space: should I even automate this?</p>
+  </section>
+
+  <!-- 1 -->
+  <details class="section" open>
+    <summary><h2>Is it worth the time?</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p class="display-q">Should I even automate this?</p>
+      <figure class="comic">
+        <div class="comic-panel">
+          <img src="assets/xkcd-1205-is-it-worth-the-time.png"
+               srcset="assets/xkcd-1205-is-it-worth-the-time.png 571w, assets/xkcd-1205-is-it-worth-the-time_2x.png 1141w"
+               sizes="(min-width: 1100px) 920px, 92vw"
+               width="571" height="464"
+               alt="The xkcd chart “Is It Worth the Time?”. It shows how long you can work on making a routine task more efficient before you spend more time than you save, across five years. Rows are how much time you shave off each run, from 1 second to 1 day. Columns are how often you do the task, from 50 times a day to yearly. Each cell is the most time worth spending. For example, shaving 5 minutes off a daily task is worth up to 6 days of work.">
+        </div>
+        <figcaption>“Is It Worth the Time?” by Randall Munroe, <a href="https://xkcd.com/1205/">xkcd.com/1205</a>, licensed <a href="https://creativecommons.org/licenses/by-nc/2.5/">CC BY-NC 2.5</a></figcaption>
+      </figure>
+      <div class="read-row">
+        <div class="card"><span class="label">Across</span><span class="v">How often you do the task</span></div>
+        <div class="card"><span class="label">Down</span><span class="v">How much time you shave off each time</span></div>
+        <div class="card"><span class="label">Each cell</span><span class="v">How long you can spend making it faster</span></div>
+        <div class="card example"><span class="label">Read one cell</span><span class="v">Shave 5 minutes off a daily task:</span><span class="big">up to 6 days</span></div>
+      </div>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About 2 minutes. Open with the question: should I even automate this?</p>
+        <p>This comic compares how often you do a task with how much time you save each time. It forces the part most of us skip: the math.</p>
+        <p>Read one cell out loud: shave 5 minutes off something you do daily, and you can spend up to 6 days making it faster.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 2 -->
+  <details class="section">
+    <summary><h2>Try it with your own task</h2><span class="meta">3 min</span></summary>
+    <div class="section-body">
+      <p class="say">Pick a task. Then pick two numbers.</p>
+      <div class="calc-layout">
+        <form class="calc-panel" id="calc" onsubmit="return false" aria-label="Is it worth the time? calculator">
+          <div class="field">
+            <label for="calc-often">How often do you do it?</label>
+            <select id="calc-often">
+              <option value="d50">50 times a day</option>
+              <option value="d5">5 times a day</option>
+              <option value="daily" selected>Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="calc-shave">Time shaved off per run</label>
+            <select id="calc-shave">
+              <option value="s1">1 second</option>
+              <option value="s5">5 seconds</option>
+              <option value="s30">30 seconds</option>
+              <option value="m1">1 minute</option>
+              <option value="m5" selected>5 minutes</option>
+              <option value="m30">30 minutes</option>
+              <option value="h1">1 hour</option>
+              <option value="h6">6 hours</option>
+              <option value="d1">1 day</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="calc-build">Time to build it (hours) <span class="hint">optional</span></label>
+            <input type="number" id="calc-build" min="0" step="0.5" inputmode="decimal" placeholder="e.g. 10">
+          </div>
+          <div class="calc-buttons">
+            <button type="button" id="calc-example">My example: 5 minutes, yearly, 10 hours to build</button>
+            <button type="button" id="calc-reset">Reset</button>
+          </div>
+        </form>
+
+        <div class="result" aria-live="polite">
+          <span class="label">Most time worth spending</span>
+          <p class="result-num" id="calc-num">6.3 days</p>
+          <p class="result-main" id="calc-out">Over five years, that is how long you could spend making it faster before you lose time.</p>
+          <p class="result-sub" id="calc-sub">That is about 152 hours in total. The comic’s cell says: 6 days.</p>
+          <div class="verdict" id="calc-verdict" hidden>
+            <p class="verdict-label" id="calc-verdict-label"></p>
+            <p id="calc-verdict-detail"></p>
+            <p id="calc-verdict-even"></p>
+          </div>
+        </div>
+      </div>
+
+      <p class="fine">The comic rounds its numbers and assumes you keep doing the task for five years. A “day” here is 24 hours, not a workday. Build time only: maintenance is not in this math.</p>
+      <p class="fine">The same idea in the <a href="https://tinalasisi.github.io/roi-calculator-github-pages/" target="_blank" rel="noopener">ROI calculator from my course</a> (opens in a new tab).</p>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About 3 minutes. Ask the room for a task they repeat. Set the two dropdowns, read the big number.</p>
+        <p>Then click my example: something that takes 5 minutes, once a year, with 10 hours to automate it. Not a great investment.</p>
+        <p>The most useful part is not the number. It is the thinking it forces you to do.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 3 -->
+  <details class="section">
+    <summary><h2>Return on investment</h2><span class="meta">1 min</span></summary>
+    <div class="section-body">
+      <p class="big-quote">The time you save should be greater than the time you spend building it.</p>
+      <ol class="q-grid" role="list">
+        <li class="card"><span class="q-num" aria-hidden="true">1</span><p>How long does this take me now?</p></li>
+        <li class="card"><span class="q-num" aria-hidden="true">2</span><p>How much faster would it be after I build it?</p></li>
+        <li class="card"><span class="q-num" aria-hidden="true">3</span><p>How often do I even do this?</p></li>
+      </ol>
+      <div class="callout lg">
+        <p><b>Confession:</b> I am the kind of person who would spend 40 hours automating something that takes me 10 minutes a week.</p>
+      </div>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About 1 minute. ROI for automation: the time you spend building should be less than the time you save over a reasonable period.</p>
+        <p>The confession: I build Rube Goldberg machines. This triggers that, that feeds into this other thing, it is all so elegant. Six months later something changes, the whole thing breaks, and I have no idea why. So pausing to ask “is this worth it?” comes from experience.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 4 -->
+  <details class="section">
+    <summary><h2>Hidden costs</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p class="say">Some costs a calculator can’t see.</p>
+      <div class="grid">
+        <div class="card cost-card">
+          <h3>Maintenance</h3>
+          <p class="card-quote">External systems change all the time.</p>
+          <ul>
+            <li>An update happens.</li>
+            <li>A feature gets renamed.</li>
+            <li>A service changes how it connects.</li>
+          </ul>
+        </div>
+        <div class="card cost-card">
+          <h3>Over-engineering</h3>
+          <p class="card-quote">Aim for “good enough” to avoid feature creep.</p>
+          <ul>
+            <li>Features you don’t need.</li>
+            <li>More complex than it has to be.</li>
+            <li>“While I’m at it, I might as well also…”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout warn lg">
+        <p>Ask first: <b>how would I know if this broke?</b></p>
+      </div>
+      <div class="stat">
+        <b>7 of 11</b>
+        <span>client proposals raise cost and upkeep. Your clients already know this.</span>
+      </div>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About 2 minutes. Maintenance: automations break, and a silent failure is worse than a visible error. Every automated process you create is a system you are now responsible for keeping alive.</p>
+        <p>Over-engineering: “while I’m at it, I might as well also…” is feature creep, the enemy of “good enough.”</p>
+        <p>The upkeep worries in the client proposals: who maintains it, ongoing tool costs, energy use.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 5 -->
+  <details class="section">
+    <summary><h2>The value of manual processes</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p class="say">Some costs aren’t about time at all. Guess what each one would cost you.</p>
+      <div class="grid">
+        <div class="card lose-card">
+          <h3>The hand-typed weekly report</h3>
+          <p class="task">Looks like a perfect automation candidate.</p>
+          <details class="reveal"><summary>What would you lose?</summary>
+            <span class="lose-word">Awareness</span>
+            <p>Putting it together may be how you stay informed.</p>
+          </details>
+        </div>
+        <div class="card lose-card">
+          <h3>Personal welcome emails</h3>
+          <p class="task">Easy to template and send.</p>
+          <details class="reveal"><summary>What would you lose?</summary>
+            <span class="lose-word">Connection</span>
+            <p>Writing them may be how you build relationships with new people.</p>
+          </details>
+        </div>
+        <div class="card lose-card">
+          <h3>Reviewing data by hand</h3>
+          <p class="task">Slow and repetitive.</p>
+          <details class="reveal"><summary>What would you lose?</summary>
+            <span class="lose-word">Quality</span>
+            <p>It may be how you catch errors before they snowball.</p>
+          </details>
+        </div>
+      </div>
+      <div class="callout lg">
+        <p>Automation handles rules well. It handles nuance poorly. <b>Automating judgment often means automating errors.</b></p>
+      </div>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About 2 minutes. Let the room guess before you open each card.</p>
+        <p>Automating these might save you twenty minutes, but it could cost you awareness, relationships, or quality.</p>
+        <p>The “describe it to a robot” test: if you can write the exact steps with no room for interpretation, you can probably automate it. If you keep adding “unless…” and “it depends…”, you are in judgment territory.</p>
+        <p>Every project today has a “stays manual” line. This is where it comes from.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 6 -->
+  <details class="section">
+    <summary><h2>Solving the wrong problem</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <p class="big-quote">Consider that the current system may be fine, with no real problem to solve!</p>
+      <ul class="big-list">
+        <li>Sometimes the task shouldn’t exist at all.</li>
+        <li>Maybe you don’t need an automated report. Maybe you need a five-minute conversation with your team.</li>
+        <li>Is it slow because of <em>my time</em>, or because I’m waiting on approvals or on someone else? Automation won’t fix the second one.</li>
+      </ul>
+      <div class="stat">
+        <b>8 of 11</b>
+        <span>client proposals say they are open to simpler or non-AI approaches. Your clients left the door open.</span>
+      </div>
+      <p class="big-quote">Automation decisions require judgment, not just math.</p>
+      <p class="say">The chart can tell you whether the numbers work out. It can’t tell you whether you should do it.</p>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About 2 minutes. Only you can decide, by thinking about context, about what you would lose, and about whether the task is actually the problem you need to solve.</p>
+        <p>Keep it short here. This idea comes back at the close, right before Charles Kemp’s session on the problem behind the problem.</p>
+      </details>
+    </div>
+  </details>
+
+  <!-- 7 -->
+  <details class="section">
+    <summary><h2>Today’s thesis: the smallest useful unit</h2><span class="meta">3 min</span></summary>
+    <div class="section-body">
+      <p class="say">The IDEA framework from my course:</p>
+      <ol class="idea-row" role="list">
+        <li>
+          <span class="letter" aria-hidden="true">I</span>
+          <h3>Identify</h3>
+          <p>What does “done” look like?</p>
+        </li>
+        <li>
+          <span class="letter" aria-hidden="true">D</span>
+          <h3>Document</h3>
+          <p>Data source, transformation, output. What’s fixed? What varies?</p>
+        </li>
+        <li class="is-today">
+          <span class="pill">Today’s focus</span>
+          <span class="letter" aria-hidden="true">E</span>
+          <h3>Experiment</h3>
+          <p><b>Choose one component to test. Start with the smallest workable version.</b></p>
+        </li>
+        <li>
+          <span class="letter" aria-hidden="true">A</span>
+          <h3>Adjust</h3>
+          <p>What could break if something changes? Who else is affected?</p>
+        </li>
+      </ol>
+      <p class="big-quote">Today we apply that to each client project.</p>
+      <p class="say">Find the smallest useful step worth automating. Have AI build it. Run it on test data. Keep the judgment calls manual.</p>
+      <h3>11 client projects, three shapes</h3>
+      <ul class="shape-list" role="list">
+        <li class="shape-1 shape-bar"><b class="shape-text">Intake → triage</b><span class="desc">Something arrives; a rule or a person decides; a record gets written.</span><span class="pill">6 projects</span></li>
+        <li class="shape-2 shape-bar"><b class="shape-text">Pile → catalog</b><span class="desc">Find it later: capture, name, retrieve.</span><span class="pill">2 projects</span></li>
+        <li class="shape-3 shape-bar"><b class="shape-text">Many sheets → one table</b><span class="desc">Two sources, one truth: join on a shared key.</span><span class="pill">3 projects</span></li>
+      </ul>
+      <p class="next-row"><a class="btn btn-primary btn-lg" href="02-idea-your-projects.html">Next: Your projects through IDEA →</a></p>
+      <details class="notes"><summary>Speaker notes</summary>
+        <p>About 3 minutes. Walk the four IDEA steps fast, land on Experiment: “start with the smallest workable version.” That is today’s thesis.</p>
+        <p>Next: each team finds its project and says its smallest useful unit in one sentence. The one on the projects page is a starting point to argue with, not an assignment.</p>
+        <p>Click through to page 2 at 2:00.</p>
+      </details>
+    </div>
+  </details>
+
+  <nav class="pager" aria-label="Sections">
+    <a href="index.html">← Outline</a>
+    <span aria-hidden="true"></span>
+    <a href="02-idea-your-projects.html">2 · Your projects through IDEA →</a>
+  </nav>
+</main>
+<script>
+(function(){
+  'use strict';
+  var DAY = 86400, YEARS = 5;
+  var RATES = {d50: 50, d5: 5, daily: 1, weekly: 1 / 7, monthly: 12 / 365, yearly: 1 / 365};
+  var SHAVES = {s1: 1, s5: 5, s30: 30, m1: 60, m5: 300, m30: 1800, h1: 3600, h6: 21600, d1: 86400};
+  var ORDER = ['d50', 'd5', 'daily', 'weekly', 'monthly', 'yearly'];
+  // Cells of xkcd 1205, same row and column order ('' = blank in the comic).
+  var COMIC = {
+    s1: ['1 day', '2 hours', '30 minutes', '4 minutes', '1 minute', '5 seconds'],
+    s5: ['5 days', '12 hours', '2 hours', '21 minutes', '5 minutes', '25 seconds'],
+    s30: ['4 weeks', '3 days', '12 hours', '2 hours', '30 minutes', '2 minutes'],
+    m1: ['8 weeks', '6 days', '1 day', '4 hours', '1 hour', '5 minutes'],
+    m5: ['9 months', '4 weeks', '6 days', '21 hours', '5 hours', '25 minutes'],
+    m30: ['', '6 months', '5 weeks', '5 days', '1 day', '2 hours'],
+    h1: ['', '10 months', '2 months', '10 days', '2 days', '5 hours'],
+    h6: ['', '', '', '2 months', '2 weeks', '1 day'],
+    d1: ['', '', '', '', '8 weeks', '5 days']
+  };
+
+  var often = document.getElementById('calc-often');
+  var shave = document.getElementById('calc-shave');
+  var build = document.getElementById('calc-build');
+  var numEl = document.getElementById('calc-num');
+  var out = document.getElementById('calc-out');
+  var sub = document.getElementById('calc-sub');
+  var verdict = document.getElementById('calc-verdict');
+  var vLabel = document.getElementById('calc-verdict-label');
+  var vDetail = document.getElementById('calc-verdict-detail');
+  var vEven = document.getElementById('calc-verdict-even');
+
+  function num(n) {
+    var r = n < 10 ? Math.round(n * 10) / 10 : Math.round(n);
+    return r.toLocaleString('en-US');
+  }
+  function unit(n, word) {
+    var s = num(n);
+    return s + ' ' + word + (s === '1' ? '' : 's');
+  }
+  function fmtDuration(sec) {
+    if (sec < 59.5) return unit(sec, 'second');
+    if (sec < 3570) return unit(sec / 60, 'minute');
+    if (sec < DAY - 1800) return unit(sec / 3600, 'hour');
+    var days = sec / DAY;
+    if (days < 14) return unit(days, 'day');
+    if (days < 63) return unit(days / 7, 'week');
+    var months = days / (365 / 12);
+    if (months < 12) return unit(months, 'month');
+    return unit(days / 365, 'year');
+  }
+
+  function update() {
+    var rate = RATES[often.value];
+    var s = SHAVES[shave.value];
+    if (rate === undefined || s === undefined) return;
+    var perDay = s * rate;                 // seconds saved per calendar day
+    var total = perDay * 365 * YEARS;      // seconds saved over five years
+    var cell = COMIC[shave.value][ORDER.indexOf(often.value)];
+    var comicLine = cell ? ' The comic’s cell says: ' + cell + '.' : ' The comic leaves this cell blank.';
+
+    if (perDay >= DAY) {
+      numEl.textContent = 'Can’t happen';
+      out.textContent = 'This combination saves 24 hours or more every single day.';
+      sub.textContent = ('Pick a smaller saving or a less frequent task.' + comicLine).trim();
+      verdict.hidden = true;
+      return;
+    }
+
+    numEl.textContent = fmtDuration(total);
+    out.textContent = 'Over five years, that is how long you could spend making it faster before you lose time.';
+    var hours = total / 3600;
+    sub.textContent = ((total >= DAY ? 'That is about ' + num(hours) + ' hours in total.' : '') + comicLine).trim();
+
+    var b = parseFloat(build.value);
+    if (!(b > 0) || !isFinite(b)) { verdict.hidden = true; return; }
+
+    verdict.hidden = false;
+    verdict.classList.remove('is-yes', 'is-even', 'is-no');
+    var savedTxt = 'You save about ' + (hours >= 1 ? unit(hours, 'hour') : fmtDuration(total)) +
+      ' and spend ' + (b >= 1 ? unit(b, 'hour') : fmtDuration(b * 3600)) + ' building it.';
+    if (hours > b * 1.2) {
+      verdict.classList.add('is-yes');
+      vLabel.textContent = '✓ Worth it';
+    } else if (hours >= b * 0.8) {
+      verdict.classList.add('is-even');
+      vLabel.textContent = '≈ Roughly even';
+    } else {
+      verdict.classList.add('is-no');
+      vLabel.textContent = '✗ Not worth it';
+    }
+    vDetail.textContent = savedTxt;
+
+    var runs = (b * 3600) / s;
+    var evenSec = (b * 3600 / perDay) * DAY; // calendar time until savings equal build time
+    if (runs <= 1) {
+      vEven.textContent = 'Break-even: the first run pays it back.';
+    } else {
+      var t = 'Break-even: after about ' + fmtDuration(evenSec) + ' of doing the task (about ' +
+        Math.round(runs).toLocaleString('en-US') + ' runs).';
+      if (evenSec > YEARS * 365 * DAY) t += ' That is past the five-year window.';
+      vEven.textContent = t;
+    }
+  }
+
+  [often, shave, build].forEach(function (el) {
+    el.addEventListener('input', update);
+    el.addEventListener('change', update);
+  });
+  document.getElementById('calc-example').addEventListener('click', function () {
+    often.value = 'yearly'; shave.value = 'm5'; build.value = '10'; update();
+  });
+  document.getElementById('calc-reset').addEventListener('click', function () {
+    often.value = 'daily'; shave.value = 'm5'; build.value = ''; update();
+  });
+  update();
+})();
+</script>
+</body>
+</html>

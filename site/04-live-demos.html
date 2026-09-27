@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Live Demos</title>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="assets/shared.js"></script>
+<style>
+/* page-only styles: var(--tokens) only, no color literals */
+
+/* hero: how the demos run */
+.eyebrow{font-size:14px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:34px 0 0}
+.run-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:12px}
+.run-grid .card{min-width:0}
+.run-num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-size:17px}
+.run-grid h3{margin:12px 0 4px;font-size:1.1em}
+.run-grid p{margin:0;font-size:.95em}
+.rules-list li{font-size:.95em}
+
+/* demo clock + jump track */
+.clock{margin:22px 0 4px;padding:14px 18px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm)}
+.clock-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.clock output{font:800 34px/1 ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;color:var(--heading);min-width:4.6ch}
+.clock-of{color:var(--muted);font-size:15px}
+.clock-now{font-weight:700;color:var(--ink)}
+.clock-btns{margin-left:auto;display:flex;flex-wrap:wrap;gap:6px}
+.track{display:grid;grid-template-columns:6fr 6fr 6fr 2fr;gap:6px;margin-top:14px}
+.track a{display:block;min-width:0;padding:7px 10px 8px;border-radius:9px;background:var(--surface-2);border-top:4px solid var(--shape,var(--line));color:var(--ink);text-decoration:none;font-size:14px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:opacity .15s,box-shadow .15s}
+.track a small{display:block;font-size:12.5px;font-weight:500;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.track a:hover{box-shadow:inset 0 0 0 1px var(--shape,var(--accent))}
+.track a.is-done{opacity:.5}
+.track a.is-now{box-shadow:inset 0 0 0 2px var(--shape,var(--accent))}
+@supports (background:color-mix(in srgb,red,blue)){.track a.is-now{background:color-mix(in srgb,var(--shape,var(--accent)) 16%,var(--surface))}}
+
+/* demo sections */
+details.section.demo{border-left:6px solid var(--shape)}
+@supports (background:color-mix(in srgb,red,blue)){
+  details.section.demo>summary{background:color-mix(in srgb,var(--shape) 6%,var(--surface))}
+  details.section.demo>summary:hover{background:color-mix(in srgb,var(--shape) 12%,var(--surface))}
+}
+.demo-badge{display:inline-block;vertical-align:.18em;margin-right:6px;padding:4px 11px;border-radius:999px;background:var(--shape);color:var(--accent-ink);font-size:13px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;line-height:1.3}
+.demo-tag{margin:2px 0 18px;font-size:1.2em;font-weight:650;line-height:1.4}
+
+.facts{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin:0 0 6px}
+.facts .card{min-width:0;background:var(--surface-2);box-shadow:none}
+.facts .card.step{background:var(--surface);border:2px solid var(--shape)}
+.fact-label{margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts .card p{margin:0;line-height:1.45}
+.facts .card p+p{margin-top:8px}
+.facts .card.step p{font-size:1.2em;font-weight:700;line-height:1.35;color:var(--heading)}
+.facts code{overflow-wrap:anywhere}
+.facts .small{font-size:.85em;color:var(--muted)}
+.stat{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.stat .num{font-size:2.6em;font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--shape)}
+.stat .unit{font-weight:650}
+.team-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.team-list .pill.main{background:var(--shape);border-color:var(--shape);color:var(--accent-ink)}
+
+.demo-prompt{margin:22px 0 10px;border-top:5px solid var(--shape);box-shadow:var(--shadow)}
+.demo-prompt .prompt-head{font-size:15px;padding:10px 14px 10px 18px}
+.demo-prompt pre{font-size:16.5px;line-height:1.6;padding:18px 20px 20px}
+:root.present .demo-prompt pre{font-size:19px}
+.demo-prompt.optional{border-style:dashed;border-top-width:1px;box-shadow:none}
+.demo-prompt.optional pre{font-size:15.5px}
+.prompt-note{margin:0 0 6px;font-size:.9em;color:var(--muted)}
+
+.subhead{display:flex;align-items:center;gap:10px;margin:30px 0 10px;font-size:1.2em}
+.subhead::before{content:"";width:11px;height:11px;border-radius:3px;background:var(--shape,var(--accent));flex:none}
+.demo ol.steps{margin:6px 0 0}
+.demo ol.steps>li{font-size:1.05em;padding-bottom:10px}
+.demo ol.steps>li::before{background:var(--shape)}
+
+details.reveal.findings{margin-top:22px}
+details.reveal.findings>summary{font-size:1.05em;color:var(--heading);padding:4px 0}
+.finds{list-style:none;padding:0;margin:10px 0 6px}
+.finds li{display:flex;gap:12px;align-items:flex-start;margin:0;padding:10px 0;border-bottom:1px solid var(--line);font-size:1.05em;line-height:1.45;max-width:none}
+.finds li:last-child{border-bottom:0}
+.finds input[type=checkbox]{width:22px;height:22px;margin-top:3px;flex:none;accent-color:var(--ok)}
+.finds label{min-width:0;font-weight:400;cursor:pointer;overflow-wrap:anywhere}
+.finds input:checked+label{color:var(--muted)}
+.finds input:checked+label::after{content:" · found";font-weight:700;color:var(--ok)}
+.reveal-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:8px}
+.reveal-foot .callout{flex:1 1 320px;margin:6px 0;font-weight:600}
+
+.map-grid{list-style:none;padding:0;margin:8px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.map-grid li{margin:0;max-width:none;min-width:0;padding:12px 16px;background:var(--surface-2);border-left:4px solid var(--shape,var(--line));border-radius:10px;line-height:1.45}
+.map-grid b{display:block;margin-bottom:2px;color:var(--heading)}
+
+details.notes ul{margin:6px 0;padding-left:20px}
+details.notes li{margin:4px 0}
+details.notes code{overflow-wrap:anywhere}
+
+/* wrap */
+.wrap-grid .card{border-top:5px solid var(--shape)}
+.wrap-grid h3{margin:0 0 6px;font-size:1.2em}
+.wrap-grid p{margin:0}
+.wrap-quote{margin-top:26px}
+
+@media (max-width:640px){
+  .track{grid-template-columns:repeat(2,1fr)}
+  .clock-btns{margin-left:0}
+  .demo-prompt pre{font-size:15px;padding:14px 16px}
+  .demo-tag{font-size:1.1em}
+}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="page">
+  <a class="brand" href="index.html">Automating Without Overwhelming Yourself</a>
+  <span class="crumb">4 of 6 · 2:45–3:05</span>
+  <nav class="section-nav" aria-label="Workshop sections">
+    <a href="index.html">Outline</a><a href="01-should-you-automate.html">1</a><a href="02-idea-your-projects.html">2</a><a href="03-tools-of-the-trade.html">3</a><a href="04-live-demos.html" aria-current="page">4</a><a href="05-hands-on.html">5</a><a href="06-share-and-close.html">6</a>
+  </nav>
+  <div class="tools">
+    <button type="button" data-expand-all>Expand all</button>
+    <button type="button" data-collapse-all>Collapse all</button>
+    <button type="button" data-present-toggle aria-label="Bigger text for the projector">Bigger text</button>
+    <button type="button" data-theme-toggle aria-label="Switch light or dark">Theme</button>
+  </div>
+</div></header>
+<main class="page">
+  <section class="hero">
+    <div class="kicker">4 · 2:45–3:05 · live in Claude Code</div>
+    <h1>Three live demos</h1>
+    <p class="lede">One demo per project shape. Each one builds the smallest useful step, on dummy data, with an agent that asks before it acts.</p>
+
+    <h2 class="eyebrow">How the demos run</h2>
+    <div class="grid run-grid">
+      <div class="card">
+        <span class="run-num" aria-hidden="true">1</span>
+        <h3>One session</h3>
+        <p>I start Claude Code once, inside the <code>03_demos</code> folder. It works only there.</p>
+      </div>
+      <div class="card">
+        <span class="run-num" aria-hidden="true">2</span>
+        <h3>House rules load first</h3>
+        <p><code>CLAUDE.md</code> is the folder's SOP. The agent reads it before my first prompt.</p>
+      </div>
+      <div class="card">
+        <span class="run-num" aria-hidden="true">3</span>
+        <h3>Watch it ask</h3>
+        <p>A permission prompt before it writes a file, and another before it runs a command. I say yes once each time.</p>
+      </div>
+      <div class="card">
+        <span class="run-num" aria-hidden="true">4</span>
+        <h3>All dummy data</h3>
+        <p>Whatever the agent reads goes to the model. So today is fake data, and client data stays in approved tools.</p>
+      </div>
+    </div>
+
+    <details class="reveal">
+      <summary>The house rules it reads first (<code>CLAUDE.md</code>)</summary>
+      <p>Everything in this folder is dummy data made for a workshop. Treat it as if it were real.</p>
+      <ul class="rules-list">
+        <li>Work only inside this folder. Don't read or write anywhere else.</li>
+        <li>The CSV files you were given are originals. Never edit them; write new files next to them.</li>
+        <li>Before you run any code, explain in plain English what it will do.</li>
+        <li>Put exact checks (duplicates, blanks, formats, dates) in code. Use your own judgment only where I ask for it, and say which is which.</li>
+        <li>When a row doesn't fit the rules, mark it "needs review" with a reason. Don't guess.</li>
+        <li>Never send email, post, or upload anything.</li>
+      </ul>
+      <p class="muted">Codex reads the same rules from <code>AGENTS.md</code>.</p>
+    </details>
+
+    <div class="clock" role="group" aria-label="Demo clock">
+      <div class="clock-row">
+        <output id="clockOut" role="timer" aria-live="off">0:00</output>
+        <span><span class="clock-of">of 20:00 · now:</span> <span class="clock-now" id="clockSeg">Demo 1 (to 6:00)</span></span>
+        <div class="clock-btns">
+          <button type="button" class="btn-primary" id="clockBtn">Start demo clock</button>
+          <button type="button" id="clockReset">Reset</button>
+        </div>
+      </div>
+      <nav class="track" aria-label="Jump to a demo">
+        <a href="#demo1" class="shape-1" data-seg="0">Demo 1<small>Intake → triage · 6 min</small></a>
+        <a href="#demo2" class="shape-2" data-seg="1">Demo 2<small>Pile → catalog · 6 min</small></a>
+        <a href="#demo3" class="shape-3" data-seg="2">Demo 3<small>Many sheets → one table · 6 min</small></a>
+        <a href="#wrap" data-seg="3">Wrap<small>2 min</small></a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- DEMO 1 -->
+  <details class="section demo shape-1" open id="demo1">
+    <summary><h2><span class="demo-badge">Demo 1</span> Intake → triage</h2><span class="meta">6 min</span></summary>
+    <div class="section-body">
+      <p class="demo-tag shape-text">Something arrives. A rule or a person decides. A record gets written.</p>
+
+      <div class="grid facts">
+        <div class="card">
+          <h3 class="fact-label">For</h3>
+          <p>Zell Entrepreneurship Clinic: it's your form.</p>
+          <div class="team-list">
+            <span class="pill main">Zell</span><span class="pill">MTA</span><span class="pill">Michigan Dining</span><span class="pill">OVPR limited submissions</span><span class="pill">Oakland FOIA</span><span class="pill">CAI</span>
+          </div>
+        </div>
+        <div class="card step">
+          <h3 class="fact-label">Smallest useful step</h3>
+          <p>Every application gets a status, so nobody gets lost.</p>
+        </div>
+        <div class="card">
+          <h3 class="fact-label">Data</h3>
+          <p class="stat"><span class="num">16</span><span class="unit">responses</span></p>
+          <p><code>demo1-intake/form_zell_application_responses.csv</code></p>
+          <p class="small">Exported from a law clinic's intake Google Form. The original stays unedited.</p>
+        </div>
+      </div>
+
+      <div class="prompt demo-prompt">
+        <div class="prompt-head"><span>Prompt 1 · paste into Claude Code</span><button type="button" class="btn-primary" data-copy="p1">Copy</button></div>
+        <pre id="p1">Look in demo1-intake. form_zell_application_responses.csv is 16 responses exported from a law clinic's intake Google Form. It's the original, so don't edit it.
+
+The smallest useful step: every application gets a status, so nobody gets lost.
+
+Write a short Python script, triage.py, that writes pipeline.csv with every row plus three new columns: status, review_reason, and flag.
+- status is "new" by default.
+- Change it to "needs review" and give the reason if: the same email address already applied in an earlier row; the business description is blank; the applicant says they are not a student; or they ask for help with a patent (this clinic doesn't do patents).
+- If the free text mentions a date or says "urgent", copy that phrase into flag. Don't act on it.
+
+Before you run anything, explain the script in plain English. Then run it and show me only the rows that need review or have a flag.</pre>
+      </div>
+
+      <div class="prompt demo-prompt optional">
+        <div class="prompt-head"><span>Optional second beat · AI on top of the rules</span><button type="button" data-copy="p1b">Copy</button></div>
+        <pre id="p1b">Now add a summary column: for rows with status "new" only, one line naming the business and the legal help it needs. Don't change any status.</pre>
+      </div>
+      <p class="prompt-note">If we run it: summaries on "new" rows only, and no status changes.</p>
+
+      <h3 class="subhead">Watch for</h3>
+      <ol class="steps">
+        <li>The plain-English explanation, before any code runs.</li>
+        <li>A request to create <code>triage.py</code>. That's a write permission.</li>
+        <li>A request to run <code>python3</code>. That's a run permission.</li>
+        <li>Only the rows that need review or carry a flag.</li>
+      </ol>
+
+      <details class="reveal findings" id="reveal1">
+        <summary>Reveal: what it should find</summary>
+        <ul class="finds">
+          <li><input type="checkbox" id="f1a" data-persist="d4-f1a"><label for="f1a"><b>Row 16, Jordan Lee:</b> same email applied earlier. Needs review: merge, don't create a second record.</label></li>
+          <li><input type="checkbox" id="f1b" data-persist="d4-f1b"><label for="f1b"><b>Row 8, Emma Lindgren:</b> blank business description. Needs review.</label></li>
+          <li><input type="checkbox" id="f1c" data-persist="d4-f1c"><label for="f1c"><b>Row 7, Diego Ruiz:</b> not a student. Needs review. A routing question, not a rejection.</label></li>
+          <li><input type="checkbox" id="f1d" data-persist="d4-f1d"><label for="f1d"><b>Rows 3 and 12, Lucas Ferreira and Isaac Mbeki:</b> patent help. Needs review, because the clinic doesn't do patents.</label></li>
+          <li><input type="checkbox" id="f1e" data-persist="d4-f1e"><label for="f1e"><b>Flags, copied but not acted on:</b> Gabe Ortiz, "URGENT - tournament is Oct 4". Jordan Lee, "need this before Oct 15".</label></li>
+        </ul>
+        <div class="reveal-foot">
+          <p class="callout">The script decided nothing that should stay manual. Rules are free and repeatable, and "needs review" beats guessing.</p>
+          <button type="button" data-clear-ticks="reveal1">Clear ticks</button>
+        </div>
+      </details>
+
+      <h3 class="subhead">Map it to your project</h3>
+      <ul class="map-grid">
+        <li><b>Zell</b>This is your pipeline. Each submission lands as a row with a status.</li>
+        <li><b>MTA</b>The eligibility rule. Eligible, not eligible, or needs review.</li>
+        <li><b>Michigan Dining</b>The next step is an AI memo draft for Kenzie to review.</li>
+        <li><b>OVPR</b>The rubric comes first.</li>
+        <li><b>Oakland FOIA</b>Exact duplicates.</li>
+        <li><b>CAI</b>This is your intake form.</li>
+      </ul>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <ul>
+          <li>Pace: about 6 minutes, 2:45 to 2:51. Drop the optional second beat if it runs long.</li>
+          <li>Point out three moments: the plain-English explanation, the write request for triage.py, the run request for python3. Answer yes once each time.</li>
+          <li>Say: the script decided nothing that should stay manual. Rules are free and repeatable, and "needs review" beats guessing.</li>
+          <li>The second beat is AI on top of the rules: summaries only, no status changes.</li>
+          <li>If it stalls, press Esc and open the backup: <code>05_instructor-only/demo-backups/demo1_pipeline.csv</code>. The lesson is the same.</li>
+        </ul>
+      </details>
+    </div>
+  </details>
+
+  <!-- DEMO 2 -->
+  <details class="section demo shape-2" id="demo2">
+    <summary><h2><span class="demo-badge">Demo 2</span> Pile → catalog</h2><span class="meta">6 min</span></summary>
+    <div class="section-body">
+      <p class="demo-tag shape-text">Find it later: capture, name, retrieve.</p>
+
+      <div class="grid facts">
+        <div class="card">
+          <h3 class="fact-label">For</h3>
+          <p>Ginsberg Center archive: exactly this.</p>
+          <div class="team-list">
+            <span class="pill main">Ginsberg</span><span class="pill">FJA staff AI portal</span><span class="pill">Oakland County</span>
+          </div>
+        </div>
+        <div class="card step">
+          <h3 class="fact-label">Smallest useful step</h3>
+          <p>A catalog someone could actually search.</p>
+        </div>
+        <div class="card">
+          <h3 class="fact-label">Data</h3>
+          <p class="stat"><span class="num">25</span><span class="unit">files listed</span></p>
+          <p><code>demo2-catalog/shared_drive_dump.csv</code></p>
+          <p class="small">A listing from an old shared drive: name, date modified, folder, size, first line.</p>
+        </div>
+      </div>
+
+      <div class="prompt demo-prompt">
+        <div class="prompt-head"><span>Prompt 2 · paste into Claude Code</span><button type="button" class="btn-primary" data-copy="p2">Copy</button></div>
+        <pre id="p2">Look in demo2-catalog. shared_drive_dump.csv lists 25 files from an old shared drive: name, date modified, folder, size, and the first line of each file. Work only from this listing. Don't open, move, or delete anything.
+
+The smallest useful step: a catalog someone could actually search.
+
+Build catalog.csv with one row per file and these columns: topic (a few words), version_group (files that are versions of the same document share a group name), keep (yes for the one version worth keeping in each group), duplicate_of (for exact copies), pii (yes if the name or first line suggests student IDs or other personal information), and junk (system files).
+
+Use code for the exact checks: duplicates, junk files, PII keywords. Use your own judgment only for topic and version_group, and tell me which columns came from which. Then list the files a person should look at before anything gets indexed, and why.</pre>
+      </div>
+
+      <h3 class="subhead">Watch for</h3>
+      <ol class="steps">
+        <li>It works from the listing only. Nothing gets opened, moved, or deleted.</li>
+        <li>Code for the exact checks: duplicates, junk files, PII keywords.</li>
+        <li>Judgment only for topic and version_group, and it says which columns came from which.</li>
+        <li>A list of files a person should look at first, with reasons.</li>
+      </ol>
+
+      <details class="reveal findings" id="reveal2">
+        <summary>Reveal: what it should find</summary>
+        <ul class="finds">
+          <li><input type="checkbox" id="f2a" data-persist="d4-f2a"><label for="f2a"><b>Training manual:</b> four versions. Keep "FINAL" from 2005-02-03. FINAL_final in /old is an exact copy.</label></li>
+          <li><input type="checkbox" id="f2b" data-persist="d4-f2b"><label for="f2b"><b>Duplicates:</b> SERVE_history_draft.doc sits in two folders, and "Untitled document" appears twice.</label></li>
+          <li><input type="checkbox" id="f2c" data-persist="d4-f2c"><label for="f2c"><b>Personal information:</b> "Fall 07 roster w IDs.xls" has student IDs. It gets deleted, never indexed. participation_roster_fall2007.xls is the safe version.</label></li>
+          <li><input type="checkbox" id="f2d" data-persist="d4-f2d"><label for="f2d"><b>Junk:</b> thumbs.db and the ~$ lock file.</label></li>
+          <li><input type="checkbox" id="f2e" data-persist="d4-f2e"><label for="f2e"><b>Other version groups:</b> handbook 2006, budget 2008, orientation agenda, reflection prompts, partner orgs, spring break 2010 planning.</label></li>
+        </ul>
+        <div class="reveal-foot">
+          <p class="callout">Code handles the exact checks. Judgment is used only for topic labels. A person decides what gets deleted.</p>
+          <button type="button" data-clear-ticks="reveal2">Clear ticks</button>
+        </div>
+      </details>
+
+      <h3 class="subhead">Map it to your project</h3>
+      <ul class="map-grid">
+        <li><b>Ginsberg</b>Exactly this. The catalog is what makes Maizey useful.</li>
+        <li><b>FJA</b>A prompt library is a catalog, with names, tags and owners.</li>
+        <li><b>Oakland</b>Retention tags.</li>
+      </ul>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <ul>
+          <li>Pace: about 6 minutes, 2:51 to 2:57.</li>
+          <li>Optional framing from deck 04: the System Graveyard, and keyword vs semantic search. Keep it to a sentence.</li>
+          <li>Say: code handles the exact checks, and judgment is used only for topic labels. A person decides what gets deleted. The catalog is what makes Maizey useful.</li>
+          <li>If it stalls, press Esc and open the backup: <code>05_instructor-only/ANSWER_KEYS.md</code> (the shared_drive_dump.csv section).</li>
+        </ul>
+      </details>
+    </div>
+  </details>
+
+  <!-- DEMO 3 -->
+  <details class="section demo shape-3" id="demo3">
+    <summary><h2><span class="demo-badge">Demo 3</span> Many sheets → one table</h2><span class="meta">6 min</span></summary>
+    <div class="section-body">
+      <p class="demo-tag shape-text">Two sources, one truth: join on a shared key, then act on the combined table.</p>
+
+      <div class="grid facts">
+        <div class="card">
+          <h3 class="fact-label">For</h3>
+          <p>Marsal gift funds: it's your shape.</p>
+          <div class="team-list">
+            <span class="pill main">Marsal</span><span class="pill">Women's Basketball</span><span class="pill">Faculty Development</span>
+          </div>
+        </div>
+        <div class="card step">
+          <h3 class="fact-label">Smallest useful step</h3>
+          <p>One table, one row per fund.</p>
+        </div>
+        <div class="card">
+          <h3 class="fact-label">Data</h3>
+          <p class="stat"><span class="num">2</span><span class="unit">offices' sheets</span></p>
+          <p><code>demo3-one-table/funds_development.csv</code> and <code>funds_finance.csv</code></p>
+          <p class="small">Both cover the same gift funds. The shared account number is written differently in each.</p>
+        </div>
+      </div>
+
+      <div class="prompt demo-prompt">
+        <div class="prompt-head"><span>Prompt 3 · paste into Claude Code</span><button type="button" class="btn-primary" data-copy="p3">Copy</button></div>
+        <pre id="p3">Look in demo3-one-table. Two offices keep spreadsheets about the same gift funds: funds_development.csv and funds_finance.csv. Both are originals, so don't edit them. The account number is the shared key, but the two offices write it differently.
+
+The smallest useful step: one table, one row per fund.
+
+Write merge.py to build funds_combined.csv by joining the two sheets on the account number after cleaning up the format. Explain the matching rule in plain English before you run it. Then show me three lists: funds that appear in only one sheet; duplicate rows; and funds whose last stewardship letter is more than 12 months before today, 2026-09-27, or missing.
+
+I don't think any of this needs AI. Tell me if you disagree.</pre>
+      </div>
+
+      <h3 class="subhead">Watch for</h3>
+      <ol class="steps">
+        <li>The matching rule in plain English, before it runs.</li>
+        <li>How it cleans up the account number before the join.</li>
+        <li>Three lists: in one sheet only, duplicate rows, and letters overdue or missing.</li>
+        <li>Whether it agrees that none of this needs AI.</li>
+      </ol>
+
+      <details class="reveal findings" id="reveal3">
+        <summary>Reveal: what it should find</summary>
+        <ul class="finds">
+          <li><input type="checkbox" id="f3a" data-persist="d4-f3a"><label for="f3a"><b>Account formats:</b> 300101 vs F-300101 vs F300103, and "300105 " with a trailing space.</label></li>
+          <li><input type="checkbox" id="f3b" data-persist="d4-f3b"><label for="f3b"><b>Development only:</b> 300113 Whitaker Counseling Fellowship. A new pledge, no finance account yet.</label></li>
+          <li><input type="checkbox" id="f3c" data-persist="d4-f3c"><label for="f3c"><b>Finance only:</b> 300114 Easton Scholarship. Legacy, inactive, no steward. Who owns it?</label></li>
+          <li><input type="checkbox" id="f3d" data-persist="d4-f3d"><label for="f3d"><b>Duplicate:</b> 300107 Nguyen appears twice in development.</label></li>
+          <li><input type="checkbox" id="f3e" data-persist="d4-f3e"><label for="f3e"><b>Letters:</b> overdue for 300102 Okafor, 300106 Brightwater and 300108 Morrow. Missing for 300104 Delgado.</label></li>
+          <li><input type="checkbox" id="f3f" data-persist="d4-f3f"><label for="f3f"><b>Names:</b> fund names differ between the sheets, so a join on names fails.</label></li>
+        </ul>
+        <div class="reveal-foot">
+          <p class="callout">A join, not AI. One clean table makes any Q&amp;A tool work.</p>
+          <button type="button" data-clear-ticks="reveal3">Clear ticks</button>
+        </div>
+      </details>
+
+      <h3 class="subhead">Map it to your project</h3>
+      <ul class="map-grid">
+        <li><b>Marsal</b>One table joined on account number. Maizey couldn't read the spreadsheets.</li>
+        <li><b>Women's Basketball</b>One sheet keyed on player, instead of three entries.</li>
+        <li><b>Faculty Development</b>Rank by interests by not-yet-attended gives a match list.</li>
+      </ul>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <ul>
+          <li>Pace: about 6 minutes, 2:57 to 3:03.</li>
+          <li>Say: "A join, not AI." Marsal asked for AI, and Maizey couldn't read their spreadsheets. One clean table makes any Q&amp;A tool work.</li>
+          <li>Your own example, if there's time: lab account statements plus reimbursements give a 45-day alert.</li>
+          <li>If it stalls, press Esc and open the backup: <code>05_instructor-only/demo-backups/demo3_funds_combined.csv</code>.</li>
+        </ul>
+      </details>
+    </div>
+  </details>
+
+  <!-- WRAP -->
+  <details class="section" id="wrap">
+    <summary><h2>What just happened</h2><span class="meta">2 min</span></summary>
+    <div class="section-body">
+      <div class="grid wrap-grid">
+        <div class="card shape-1">
+          <h3>Rules went into code</h3>
+          <p>Duplicates, blanks, formats, dates. Exact checks, written once, free to rerun.</p>
+        </div>
+        <div class="card shape-2">
+          <h3>Judgment calls stayed manual</h3>
+          <p>Anything that didn't fit got "needs review" and a reason. Nothing was guessed.</p>
+        </div>
+        <div class="card shape-3">
+          <h3>Demo 3 needed no AI</h3>
+          <p>A join on a cleaned-up key did the work.</p>
+        </div>
+      </div>
+      <p class="big-quote wrap-quote">After the break, you build your own smallest useful unit.</p>
+      <p class="muted">Break 3:05 to 3:20. Hands-on starts at 3:20.</p>
+
+      <details class="notes"><summary>Speaker notes</summary>
+        <ul>
+          <li>Pace: 2 minutes, 3:03 to 3:05, then break.</li>
+          <li>Three points only: rules into code, judgment calls flagged for manual review instead of guessed, and the third demo needed no AI at all.</li>
+        </ul>
+      </details>
+    </div>
+  </details>
+
+  <nav class="pager" aria-label="Sections">
+    <a href="03-tools-of-the-trade.html">← 3 · Tools of the trade</a>
+    <a href="index.html">Outline</a>
+    <a href="05-hands-on.html">5 · Build your smallest useful unit →</a>
+  </nav>
+</main>
+<script>
+(function(){
+  /* Clear the tick boxes inside one reveal (and their saved state). */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('[data-clear-ticks]') : null;
+    if (!btn) return;
+    var box = document.getElementById(btn.getAttribute('data-clear-ticks'));
+    if (!box) return;
+    [].forEach.call(box.querySelectorAll('input[type=checkbox]'), function(cb){
+      cb.checked = false;
+      cb.dispatchEvent(new Event('change', {bubbles: true}));
+      try { localStorage.setItem('aw:' + cb.getAttribute('data-persist'), '0'); } catch (err) {}
+    });
+  });
+
+  /* In-page links to a demo open its section before scrolling to it. */
+  function openTarget(id){
+    var d = id ? document.getElementById(id) : null;
+    if (d && d.tagName === 'DETAILS') d.open = true;
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (a) openTarget(a.getAttribute('href').slice(1));
+  });
+  window.addEventListener('hashchange', function(){ openTarget(location.hash.slice(1)); });
+  openTarget(location.hash.slice(1));
+
+  /* Demo clock: counts up to 20 minutes, names the current segment, lights up the track. */
+  var btn = document.getElementById('clockBtn');
+  var reset = document.getElementById('clockReset');
+  var out = document.getElementById('clockOut');
+  var seg = document.getElementById('clockSeg');
+  var track = document.querySelectorAll('.track [data-seg]');
+  if (!btn || !out || !seg) return;
+  var SEGS = [
+    [360, 'Demo 1 (to 6:00)'],
+    [720, 'Demo 2 (to 12:00)'],
+    [1080, 'Demo 3 (to 18:00)'],
+    [1200, 'Wrap (to 20:00)']
+  ];
+  var elapsedMs = 0, startedAt = 0, timer = null;
+  function fmt(s){ var m = Math.floor(s / 60), r = s % 60; return m + ':' + (r < 10 ? '0' : '') + r; }
+  function total(){ return Math.floor((elapsedMs + (timer ? Date.now() - startedAt : 0)) / 1000); }
+  function render(){
+    var t = total();
+    out.textContent = fmt(t);
+    var label = 'Over time: head to the break', now = SEGS.length;
+    for (var i = 0; i < SEGS.length; i++) { if (t < SEGS[i][0]) { label = SEGS[i][1]; now = i; break; } }
+    seg.textContent = label;
+    [].forEach.call(track, function(a){
+      var k = +a.getAttribute('data-seg');
+      a.classList.toggle('is-done', k < now);
+      a.classList.toggle('is-now', k === now);
+      if (k === now) a.setAttribute('aria-current', 'step'); else a.removeAttribute('aria-current');
+    });
+  }
+  btn.addEventListener('click', function(){
+    if (timer) {
+      elapsedMs += Date.now() - startedAt; clearInterval(timer); timer = null;
+      btn.textContent = 'Resume demo clock';
+    } else {
+      startedAt = Date.now(); timer = setInterval(render, 250);
+      btn.textContent = 'Pause demo clock';
+    }
+    render();
+  });
+  if (reset) reset.addEventListener('click', function(){
+    if (timer) { clearInterval(timer); timer = null; }
+    elapsedMs = 0; btn.textContent = 'Start demo clock'; render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
